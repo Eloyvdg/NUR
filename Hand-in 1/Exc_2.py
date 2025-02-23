@@ -55,28 +55,11 @@ for i in range(len(x)):
 b_improved_1 = start.iteration(1)
 b_improved_10 = start.iteration(10)
 
-
-# b_improved_1 = copy.deepcopy(b)
-# for i in range(1):   
-#     error = LU @ b_improved_1 - y
-#     # print(error, y)
-#     # print(LU @ b_improved)
-#     start_improved = solver(x, b_improved_1)
-#     b_improved_1 -= start_improved.solve()
-
 for i in range(len(xx)): 
     yyc1[i] = np.dot(b_improved_1, xx[i]**np.arange(0,20))
     
 for i in range(len(x)): 
     yc1[i] = np.dot(b_improved_1, x[i]**np.arange(0,20))
-    
-# b_improved_10 = copy.deepcopy(b)
-# for i in range(10):   
-#     error = LU @ b_improved_10 - y
-#     # print(error, y)
-#     # print(LU @ b_improved)
-#     start_improved = solver(x, error)
-#     b_improved_10 -= start_improved.solve()
 
 for i in range(len(xx)): 
     yyc10[i] = np.dot(b_improved_10, xx[i]**np.arange(0,20))
@@ -123,7 +106,3 @@ plt.savefig('my_vandermonde_sol_2c.png',dpi=600)
 
 #Don't forget to caption your figures to describe them/
 #mention what conclusions you draw from them!
-
-
-    
-
