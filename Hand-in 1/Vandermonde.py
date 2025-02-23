@@ -24,8 +24,8 @@ class solver():
         
         for j in range(decomposition.shape[1]): 
             for i in range(j+1): 
-                    for k in range(i):
-                        decomposition[i,j] -= decomposition[i,k] * decomposition[k,j]     
+                for k in range(i):
+                    decomposition[i,j] -= decomposition[i,k] * decomposition[k,j]     
                            
             for i in range(j+1, decomposition.shape[1]):
                 for k in range(j): 
@@ -35,23 +35,43 @@ class solver():
         return decomposition
     
     def solve(self):
-        matrix = solver._crout(x)
+        matrix = solver._crout(self.x)
         b = self.y.copy()
         for i in range(len(b)): 
             for j in range(i): 
                 b[i] -= matrix[i,j] * b[j]
-        
-        for i in range(len(b), 0):
+        for i in range(len(b)-1, -1, -1):
             for j in range(i+1, len(b)):
                 b[i] -= matrix[i,j] * b[j]
+            
+            b[i] /= matrix[i,i]
         return b
     
+    def iteration(self, iterations): 
+        matrix = solver._crout(self.x)
+        start = solver(self.x, self.y)
+        b = start.solve()
+        for i in range(iterations): 
+            error = matrix @ b - self.y
+            improved = solver(self.x, error)
+            b -= improved.solve()
+            
+        return b
 
 if __name__ == '__main__':
+    import matplotlib.pyplot as plt
     data=np.genfromtxt(("Vandermonde.txt"),comments='#',dtype=np.float64)
     x=data[:,0]
     y=data[:,1]
+    xx = np.linspace(x[0], x[-1], 1001)  # x values to interpolate at
+    
     start = solver(x, y)
     
     LU = start._crout(x)
     b = start.solve()
+    result = []
+    
+    for i in range(len(xx)): 
+        result += [np.dot(b, xx[i]**np.arange(0,20))]
+    plt.plot(xx, result)
+    plt.plot(x,y, '.')
