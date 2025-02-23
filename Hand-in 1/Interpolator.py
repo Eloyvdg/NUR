@@ -10,29 +10,6 @@ class Interpolation:
         self.ydata = ydata
         
     def _bisection(self, x): 
-        # low = 0
-        # high = np.max(self.xdata)# len(self.xdata) - 1
-        # k = low-1
-        # for i in self.xdata:
-        #     if i > k:
-        #         k = i
-        #     else: 
-        #         print('Data is not monotonic')
-        
-        # while (high - low) > 1:
-        # #     midpoint = (high + low) / 2# // 2
-        # #     if x > midpoint: 
-        # #         low = midpoint
-        # #     else: 
-        # #         high = midpoint
-        # # print(low, high)
-        #     midpoint = (high + low) // 2
-        #     if x > self.xdata[midpoint]: 
-        #         low = self.xdata[midpoint]
-        #     else: 
-        #         high = self.xdata[midpoint]
-        # return low, high
-    
         low = 0
         high = len(self.xdata) - 1
         k = low-1
@@ -43,12 +20,6 @@ class Interpolation:
                 print('Data is not monotonic')
         
         while (high - low) > 1:
-        #     midpoint = (high + low) / 2# // 2
-        #     if x > midpoint: 
-        #         low = midpoint
-        #     else: 
-        #         high = midpoint
-        # print(low, high)
             midpoint = (low + high) // 2
             if x > self.xdata[midpoint]: 
                 low = midpoint
@@ -123,4 +94,4 @@ if __name__ == '__main__':
 
     plt.figure(figsize = (8,6))
     plt.plot(x, y, '.')
-    plt.plot(xx, P)
+    plt.plot(xx, P)  
