@@ -15,6 +15,9 @@ python3 Poisson.py > poisson.txt
 echo "Run the second script ..."
 python3 Vandermonde.py > vandermonde_output.txt
 
+echo "Run the third script ..."
+python3 Timeit.py > timeit.txt
+
 echo "Generating the pdf"
 
 pdflatex template.tex
