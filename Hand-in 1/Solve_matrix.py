@@ -1,7 +1,6 @@
 import numpy as np
 
-class solver(): 
-    
+class solver():   
     def __init__(self, x, y): 
         self.x = x
         self.y = y
@@ -57,21 +56,3 @@ class solver():
             b -= improved.solve()
             
         return b
-
-if __name__ == '__main__':
-    import matplotlib.pyplot as plt
-    data=np.genfromtxt(("Vandermonde.txt"),comments='#',dtype=np.float64)
-    x=data[:,0]
-    y=data[:,1]
-    xx = np.linspace(x[0], x[-1], 1001)  # x values to interpolate at
-    
-    start = solver(x, y)
-    
-    LU = start._crout(x)
-    b = start.solve()
-    result = []
-    
-    for i in range(len(xx)): 
-        result += [np.dot(b, xx[i]**np.arange(0,20))]
-    plt.plot(xx, result)
-    plt.plot(x,y, '.')
