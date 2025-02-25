@@ -1,0 +1,66 @@
+\section{Vandermonde matrix}
+\subsection{Exercise a}
+For question a, we will look at interpolation using a LU decomposition. Provided are 20 points with both x and y values. The first step is to create a Vandermonde matrix of size 20x20, based on these points. We do this according to Equation \ref{eq:Vandermonde}.
+\begin{equation}\label{eq:Vandermonde}
+    V_{ij} = x^i_j,
+\end{equation}
+where \textbf{V} is the Vandermonde matrix. Furthermore, both i and j go from 0 to 19, with i the row index and j the column index. The code for creating this matrix is given in the \texttt{\_vandermonde} definition.  
+
+Now we have the Vandermonde matrix, we are able to find the LU decomposition corresponding to this matrix. Crout's theorem helps us to find both the upper and lower part of the LU decomposition. The first step is to set $\alpha_{ii}$ all to 1. After this we will loop over all the columns j and calculate $\beta_{ij}$ and $\alpha_{ij}$. Equations \ref{eq:beta} and \ref{eq:alpha} are used for this.
+\begin{equation}\label{eq:beta}
+    \beta_{ij} = \alpha_{ij} - \sum^{i-1}_{k=0}{\alpha_{ik}\beta_{kj}}
+\end{equation}
+\begin{equation}\label{eq:alpha}
+    \alpha_{ij} = \frac{1}{\beta_jj} \left(\alpha_{ij} - \sum^{j-1}_{k=0}{\alpha_{ik}\beta_{kj}}\right)
+\end{equation}
+Eventually, we want find \textbf{c} in \textbf{Vc} = \textbf{y}, where y is the vector of the y-values of the given points. We do this via forward and backward substitution. First, we set \textbf{c} equal to \textbf{y}. Now we will loop over every row i in \textbf{b} and apply the forward and backward substitution. Forward substitution is given by Equation \ref{eq:forward} and backward substitution is given by Equation \ref{eq:backward}
+\begin{equation}\label{eq:forward}
+    y_i = \frac{1}{\alpha_ii} \left(b_i - \sum^{i-1}_{j=0}{\alpha_{ij}y_{j}}\right)
+\end{equation}
+\begin{equation}\label{eq:backward}
+    c_i = \frac{1}{\beta_ii} \left(y_i - \sum^{N-1}_{j=i+1}{\beta_{ij}c_{j}}\right)
+\end{equation}
+In the equation for forward substitution we can skip the division by $\alpha_{ii}$, as we set these to 1. Furthermore, for both substitutions, we can overwrite the vector \textbf{c} to save memory. Now we have found \textbf{c}, we can calculate the polynomial corresponding to this vector. The result of \textbf{c} is given below: 
+
+The corresponding figure with interpolation via LU decomposition is shown in Figure \ref{fig:LU.png}. 
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.9\linewidth]{./plots/my_vandermonde_sol_2a.png}
+  \caption{The result of the interpolation of the 20 given points via LU decomposition. The results show that the line is smooth and goes through all the points. Between the last three points, the polynomial reaches very high and low y-values, which is due to the fact it is a 19th order polynomial.}
+  \label{fig:2a}
+\end{figure}
+
+\subsection{Exercise b}
+In the second part of this question we will perform an interpolation using Neville's theorem. To find the nearest point left and right of the x-value where we want to interpolate, a bisection algorithm is applied. First of all, we have to do a check if the data on the x-axis is monotonic. This is done with a simple for-loop where we check if the next value is larger than the previous one. After that, we start with the bisection.
+The algorithm consists of calculating the index of the midpoint between the highest and lowest index, after which we check if the x-value of the point we want to interpolate at is smaller or larger than the x-value at the midpoint. If it is larger, the lowest index is replaced by the index of the midpoint, and if it is larger, the highest index is replaced by the index of the midpoint. After every step, we calculate the difference between the updated highest and lowest indexes. While this difference is larger than 1, we continue with the bisection algorithm. 
+
+Now we know the closest real points next to the value we want to interpolate at, we can start with Neville's theorem. Depedent on the order of the polynomial, it could be the case there is only one or even zero point(s) left and multiple right of the x-value we want to interpolate at. In that case, we add more points to the right side that are used to calculate the interpolated value. This way, the order of the polynomial stays the same.
+
+The next step is to loop over the order k from 1 through M-1, where M is the amount of points around the x-value we want to interpolate at and equal to the order -1. Next, we loop over the intervals [$x_i, x_j$] with j = k + i and i from 0 through M - 1 - K. The values are then updated according Equation \ref{eq:Lagrange}.
+
+\begin{equation}
+    P(x) = \sum^{M-1}_{i=0}{\frac{(x_j - x)F_i(x) - (x-x_i)G_j(x)}{x_j-x_i}},
+\end{equation}
+where $x_j$ is the x-value at index j, $x_i$ the x-value at index i, and x the x-value where we want to interpolate. Furthermore, $F_i(x)$ is the exact solution at i and $G_j(x)$ is the exact solution at j. We update the values of P by overwriting previous orders. The result of this is shown in Figure \ref{fig:2b}.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.9\linewidth]{./plots/my_vandermonde_sol_2b.png}
+  \caption{The result of the interpolation of the 20 given points via Neville's theorem. The results show that the line is smooth and goes through all the points, just as he LU decomposition. The difference between the real points and interpolated points is a lot smaller for this interpolation. At some points, there is a 0 difference between them. The difference is probably caused by errors made while doing all the calculations.}
+  \label{fig:2b}
+\end{figure}
+
+\subsection{Exercise c}
+For this subquestion, we have to try to improve the interpolation via the LU decomposition by iterating. This iterative process is based on solving \textbf{$\delta$c}, which can be calculated via \textbf{Vc'} - \textbf{y}, where \textbf{c'} is the first found solution. The improved solution is then \textbf{c"} = \textbf{c'} - \textbf{$\delta$c}. By iterating over this process, we can possibly further improve the result. As we have overwritten the original matrix \textbf{V} with the LU decomposition, we have to find this back by multiplying the lower and upper matrix with each other. The results of doing this once and 10 times is shown in Figure \ref{fig:2c}.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.9\linewidth]{./plots/my_vandermonde_sol_2b.png}
+  \caption{The result of the interpolation of the 20 given points via LU decomposition with both 1 and 10 iterations. This does not result in an improvement of the previous result with a LU decomposition. The difference between the real and interpolated values is still of similar order and a lot larger than Neville's theorem.}
+  \label{fig:2c}
+\end{figure}
+
+\subsection{Exercise d}
+
+

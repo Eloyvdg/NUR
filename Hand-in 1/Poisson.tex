@@ -1,0 +1,15 @@
+\section{Poisson distribution}
+\lstinputlisting{Poisson.py}
+The Poisson probability distribution is given by Equation \ref{eq:Poisson}. 
+\begin{equation}\label{eq:Poisson}
+    P_{\lambda}(k) = \frac{\lambda^k e^{-\lambda}}{k!}
+\end{equation}
+If this probability is calculated directly using this equation, one would expect an overflow for high $\lambda$ and $k$. Therefore, we want to calculate the probability in logspace. Taking the natural logarithm of the probability distribution results in Equation \ref{eq:Poisson}. 
+\begin{equation}\label{eq:Poisson}
+    \log{P_{\lambda}(k)} = k \cdot \log{\lambda} - \lambda - \log{k!}
+\end{equation}
+In this equation, we can rewrite ($\log{k!}$) to ($\log{k} + \log{k-1} + ... + \log{1}$). An advantage of this method is that this will not result in an overflow when calculating $k!$, or an underflow when performing the division. By taking the exponent of the result, we get back to the original Poisson probability distribution. Additionally, we also have to keep in mind that we only use float32 and int32 in our calculations. In order to so, we add .astype(np.float32) after every calculating and the list of $\lambda$. For the integers k, we will apply .astype(np.int32). 
+
+The results of the calculation are: 
+
+\lstinputlisting{poisson.txt}
