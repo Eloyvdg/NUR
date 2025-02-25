@@ -1,8 +1,8 @@
 \section{Vandermonde matrix}
-\inputlstlisting{Solve_matrix.py}
-\inputlstlisting{Interpolator.py}
+\lstinputlisting{Solve_matrix.py}
+\lstinputlisting{Interpolator.py}
 \subsection{Exercise a}
-\inputlstlisting{Vandermonde.py}
+\lstinputlisting{Vandermonde.py}
 For question a, we will look at interpolation using a LU decomposition. Provided are 20 points with both x and y values. The first step is to create a Vandermonde matrix of size 20x20, based on these points. We do this according to Equation \ref{eq:Vandermonde}.
 \begin{equation}\label{eq:Vandermonde}
     V_{ij} = x^i_j,
@@ -65,8 +65,8 @@ For this subquestion, we have to try to improve the interpolation via the LU dec
 \end{figure}
 
 \subsection{Exercise d}
-\inputlstlisting{Timeit.py}
+\lstinputlisting{Timeit.py}
 The last step is to measure the execution times of the three interpolations. The results of these are given below below: 
-\inputlstlisting{timeit.txt}
+\lstinputlisting{timeit.txt}
 We directly see that interpolation via LU decomposition is the fastest. This was expected, as Neville's theorem requires a lot of for loops and calculations. However, adding 10 iterations to the LU decomposition, only multiplies the total execution time by about 5 times. This can be explained due to not havinf to solve find the LU decomposition for every iteration. 
 
