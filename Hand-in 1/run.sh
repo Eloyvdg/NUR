@@ -21,6 +21,10 @@ fi
 
 # Script that returns a plot
 echo "Run the first script ..."
+python3 poisson.py > poisson.txt
+
+# Script that returns a plot
+echo "Run the first script ..."
 python3 sine.py
 
 # Script that pipes output to a file
