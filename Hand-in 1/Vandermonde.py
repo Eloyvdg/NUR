@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 import os
-from Decomposition import solver
+from Solve_matrix import solver
 import Interpolator
 import copy
 
