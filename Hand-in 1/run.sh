@@ -10,7 +10,7 @@ rm -rf plots/*
 
 # Script that returns a plot
 echo "Run the first script ..."
-python3 poisson.py > poisson.txt
+python3 Poisson.py > poisson.txt
 
 echo "Run the second script ..."
 python3 Vandermonde.py > vandermonde_output.txt
