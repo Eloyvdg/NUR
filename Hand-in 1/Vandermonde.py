@@ -11,7 +11,8 @@ import copy
 #as long as the results are clearly presented
 
 # data=np.genfromtxt(os.path.join(sys.path[0],"Vandermonde.txt"),comments='#',dtype=np.float64)
-data=np.genfromtxt(("Vandermonde.txt"),comments='#',dtype=np.float64)
+data=np.genfromtxt(os.path.join(sys.path[0],"Vandermonde.txt"),comments='#',dtype=np.float64)
+#data=np.genfromtxt(("Vandermonde.txt"),comments='#',dtype=np.float64)
 
 x=data[:,0]
 y=data[:,1]
