@@ -4,16 +4,28 @@ from matplotlib.image import imread
 
     
 class Interpolation:
+    ''' Class to perform linear or Neville's interpolation
+    Attributes: 
+    xdata: List of known x data
+    ydata: List of corresponding y data '''
+    
     def __init__(self, xdata, ydata):
+        '''
         self.xdata = xdata
         self.ydata = ydata
         
     def _bisection(self, x): 
+    ''' Performs a bisection to a given x.
+    Input: 
+    x: x value to perform bisection at
+    Output: 
+    low, high: The closest points left and right of x ''' 
+        
         low = 0
         high = len(self.xdata) - 1
         
         k = low-1
-        for i in self.xdata:
+        for i in self.xdata: # Check if data is monotonic
             if i > k:
                 k = i
             else: 
@@ -28,6 +40,12 @@ class Interpolation:
         return low, high
     
     def linear(self, xdata):
+        ''' Perform linear interpolation.
+        Input: 
+        xdata: all the x values to interpolate at
+        Output: 
+        interp_values: The corresponding interpolated y values '''
+        
         interp_values = []
         for i in xdata:
             idx1, idx2 = self._bisection(i)
@@ -36,12 +54,19 @@ class Interpolation:
         return interp_values
     
     def neville(self, x, order):
-        
+        '''
+        Perform interpolation according to Neville's theorem.
+        Input: 
+        x: all the x values to interpolate at
+        Output: 
+        The corresponding interpolated y values '''
+
         M = order + 1
         idx1, idx2 = self._bisection(x)
 
         split = M // 2        
 
+        # Check if there are enough real points left or right
         if idx1 < split: 
             idx2 = M
             idx1 = 0
@@ -51,7 +76,8 @@ class Interpolation:
         else: 
             idx1 -= split
             idx2 += split
-    
+
+        # Calculate the interpolated values
         P = self.ydata[idx1:idx2].copy()
         for k in range(1,M):
             for i in range(M-k):
