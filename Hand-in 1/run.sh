@@ -1,6 +1,5 @@
 #!/bin/bash
 
-echo "Run handin template -- this is an example, make sure to edit this (e.g. rename template.tex to [YourLastName].tex)!"
 
 echo "Clearing/creating the plotting directory"
 if [ ! -d "plots" ]; then
@@ -20,9 +19,9 @@ python3 Timeit.py > timeit.txt
 
 echo "Generating the pdf"
 
-pdflatex template.tex
-bibtex template.aux
-pdflatex template.tex
-pdflatex template.tex
+pdflatex genugten.tex
+bibtex genugten.aux
+pdflatex genugten.tex
+pdflatex genugten.tex
 
 
