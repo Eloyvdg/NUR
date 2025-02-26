@@ -1,6 +1,6 @@
 import numpy as np
 
-def poisson(lamb, k):
+def poisson(lamb, k): # Calculate Poisson in logarithmic space
     result = k * np.log(lamb).astype(np.float32) - lamb
     log_fact = 0
     for i in range(1, k + 1):
@@ -10,8 +10,10 @@ def poisson(lamb, k):
 lamb = np.array([1, 5, 3, 2.6, 100, 101]).astype(np.float32)
 k = np.array([0, 10, 21, 40, 5, 200]).astype(np.int32)
 P_k = []
+
 for j in range(len(k)): 
     P_k += [poisson(lamb[j], k[j])]
 
+# Print the results
 for i in range(len(P_k)):
-    print('For ' + r'$\lambda$ =' + f' {lamb[i]:.1e} and k = {int(k[i])}, P = {P_k[i]:.6e}')
+    print('For $\lambda$ = {lamb[i]:.1e} and k = {int(k[i])}, P = {P_k[i]:.6e}')
