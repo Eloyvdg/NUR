@@ -15,11 +15,11 @@ class Interpolation:
         self.ydata = ydata'''
         
     def _bisection(self, x): 
-    ''' Performs a bisection to a given x.
-    Input: 
-    x: x value to perform bisection at
-    Output: 
-    low, high: The closest points left and right of x ''' 
+        ''' Performs a bisection to a given x.
+        Input: 
+        x: x value to perform bisection at
+        Output: 
+        low, high: The closest points left and right of x ''' 
         
         low = 0
         high = len(self.xdata) - 1
