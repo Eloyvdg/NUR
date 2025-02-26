@@ -62,10 +62,6 @@ for i in range(len(xx)):
 for i in range(len(x)): 
     yc10[i] = np.dot(b_improved_10, x[i]**np.arange(0,20))
 
-#Don't forget to output the coefficients you find with your LU routine
-print('The vector for 1 iteration with LU decompoisition is ' + r'\textbf{c}' + f'is {b_improved_1}')
-print('The vector for 10 iteration with LU decompoisition is ' + r'\textbf{c}' + f'is {b_improved_10}')
-
 #Plot of points with absolute difference shown on a log scale (question 2a)
 fig=plt.figure()
 gs=fig.add_gridspec(2,hspace=0,height_ratios=[2.0,1.0])
