@@ -48,4 +48,4 @@ timeit_c = timeit.timeit(setup = mysetup, stmt = mycode_c, number = niter)
 
 print(f'The duration of the LU decomposition for {niter} iterations is {timeit_a:.6e} seconds')
 print(f'The duration of the Neville interpolation for {niter} iterations is {timeit_b:.6e} seconds')
-print(f'The duration of the LU decomposition with 10 improving iterations and for {niter:.6e} iterations is {timeit_c} seconds')
+print(f'The duration of the LU decomposition with 10 improving iterations and for {niter} iterations is {timeit_c:.6e} seconds')
