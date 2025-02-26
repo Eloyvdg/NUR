@@ -5,7 +5,7 @@ mysetup = '''import numpy as np
 import matplotlib.pyplot as plt
 import sys
 import os
-from Decomposition import solver
+from Solve_matrix import solver
 import Interpolator
 
 data=np.genfromtxt(os.path.join(sys.path[0],"Vandermonde.txt"),comments='#',dtype=np.float64)
