@@ -16,4 +16,4 @@ for j in range(len(k)):
 
 # Print the results
 for i in range(len(P_k)):
-    print(f'For $\\lambda$ = {lamb[i]:.1e} and k = {int(k[i])}, P = {P_k[i]:.6e}')
+    print(f'For $\lambda$ = {lamb[i]:.1e} and k = {int(k[i])}, P = {P_k[i]:.6e}')
