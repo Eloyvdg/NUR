@@ -44,7 +44,7 @@ Now we know the closest real points next to the value we want to interpolate at,
 
 The next step is to loop over the order k from 1 through M-1, where M is the amount of points around the x-value we want to interpolate at and equal to the order -1. Next, we loop over the intervals [$x_i, x_j$] with j = k + i and i from 0 through M - 1 - K. The values are then updated according Equation \ref{eq:Lagrange}.
 
-\begin{equation}\label{Lagrange}
+\begin{equation}\label{eq:Lagrange}
     P(x) = \sum^{M-1}_{i=0}{\frac{(x_j - x)F_i(x) - (x-x_i)G_j(x)}{x_j-x_i}},
 \end{equation}
 where $x_j$ is the x-value at index j, $x_i$ the x-value at index i, and x the x-value where we want to interpolate. Furthermore, $F_i(x)$ is the exact solution at i and $G_j(x)$ is the exact solution at j. We update the values of P by overwriting previous orders. The result of this is shown in Figure \ref{fig:2b}. In this figure, we see that it is similar to the interpolation via LU decomposition. However, the difference with the real points is smaller. The small difference with the real points is probably caused by floating point errors.
