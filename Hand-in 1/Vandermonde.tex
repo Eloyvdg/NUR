@@ -24,9 +24,9 @@ Eventually, we want find \textbf{c} in \textbf{Vc} = \textbf{y}, where y is the 
     c_i = \frac{1}{\beta_ii} \left(y_i - \sum^{N-1}_{j=i+1}{\beta_{ij}c_{j}}\right)
 \end{equation}
 In the equation for forward substitution we can skip the division by $\alpha_{ii}$, as we set these to 1. Furthermore, for both substitutions, we can overwrite the vector \textbf{c} to save memory. Now we have found \textbf{c}, we can calculate the polynomial corresponding to this vector. The result of \textbf{c} is given below: 
-\\
+\\\\
 \input{vandermonde_output.txt}
-\\
+\\\\
 The corresponding figure with interpolation via LU decomposition is shown in Figure \ref{fig:2a}. In this figure, we see that the difference with the real points increases for larger x. This is probably due to an increase in the error for every calculation that is made. By eye, it seems like it fits the points correctly. 
 
 \begin{figure}[h!]
