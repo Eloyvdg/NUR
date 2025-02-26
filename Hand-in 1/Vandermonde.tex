@@ -27,7 +27,7 @@ In the equation for forward substitution we can skip the division by $\alpha_{ii
 
 \lstinputlisting{vandermonde_output.txt}
 
-The corresponding figure with interpolation via LU decomposition is shown in Figure \ref{fig:2a.png}. 
+The corresponding figure with interpolation via LU decomposition is shown in Figure \ref{fig:2a.png}. In this figure, we see that the difference with the real points increases for larger x. This is probably due to an increase in the error for every calculation that is made. By eye, it seems like it fits the points correctly. 
 
 \begin{figure}[h!]
   \centering
@@ -48,7 +48,7 @@ The next step is to loop over the order k from 1 through M-1, where M is the amo
 \begin{equation}\label{Lagrange}
     P(x) = \sum^{M-1}_{i=0}{\frac{(x_j - x)F_i(x) - (x-x_i)G_j(x)}{x_j-x_i}},
 \end{equation}
-where $x_j$ is the x-value at index j, $x_i$ the x-value at index i, and x the x-value where we want to interpolate. Furthermore, $F_i(x)$ is the exact solution at i and $G_j(x)$ is the exact solution at j. We update the values of P by overwriting previous orders. The result of this is shown in Figure \ref{fig:2b}.
+where $x_j$ is the x-value at index j, $x_i$ the x-value at index i, and x the x-value where we want to interpolate. Furthermore, $F_i(x)$ is the exact solution at i and $G_j(x)$ is the exact solution at j. We update the values of P by overwriting previous orders. The result of this is shown in Figure \ref{fig:2b}. In this figure, we see that it is similar to the interpolation via LU decomposition. However, the difference with the real points is smaller. The small difference with the real points is probably caused by floating point errors.
 
 \begin{figure}[h!]
   \centering
@@ -58,7 +58,7 @@ where $x_j$ is the x-value at index j, $x_i$ the x-value at index i, and x the x
 \end{figure}
 
 \subsection{Exercise c}
-For this subquestion, we have to try to improve the interpolation via the LU decomposition by iterating. This iterative process is based on solving \textbf{$\delta$c}, which can be calculated via \textbf{Vc'} - \textbf{y}, where \textbf{c'} is the first found solution. The improved solution is then \textbf{c"} = \textbf{c'} - \textbf{$\delta$c}. By iterating over this process, we can possibly further improve the result. As we have overwritten the original matrix \textbf{V} with the LU decomposition, we have to find this back by multiplying the lower and upper matrix with each other. The results of doing this once and 10 times is shown in Figure \ref{fig:2c}.
+For this subquestion, we have to try to improve the interpolation via the LU decomposition by iterating. This iterative process is based on solving \textbf{$\delta$c}, which can be calculated via \textbf{Vc'} - \textbf{y}, where \textbf{c'} is the first found solution. The improved solution is then \textbf{c"} = \textbf{c'} - \textbf{$\delta$c}. By iterating over this process, we can possibly further improve the result. As we have overwritten the original matrix \textbf{V} with the LU decomposition, we have to find this back by multiplying the lower and upper matrix with each other. The results of doing this once and 10 times is shown in Figure \ref{fig:2c}. The results are very similar to the original LU decomposition. Therefore, it could be the case we already found the solution with the smallest error with 0 zero iterations.
 
 \begin{figure}[h!]
   \centering
@@ -71,5 +71,5 @@ For this subquestion, we have to try to improve the interpolation via the LU dec
 \lstinputlisting{Timeit.py}
 The last step is to measure the execution times of the three interpolations. The results of these are given below below: 
 \lstinputlisting{timeit.txt}
-We directly see that interpolation via LU decomposition is the fastest. This was expected, as Neville's theorem requires a lot of for loops and calculations. However, adding 10 iterations to the LU decomposition, only multiplies the total execution time by about 5 times. This can be explained due to not havinf to solve find the LU decomposition for every iteration. 
+We directly see that interpolation via LU decomposition is the fastest. This was expected, as Neville's theorem requires a lot of for loops and calculations, which increases the execution time. However, adding 10 iterations to the LU decomposition, only multiplies the total execution time by about 5 times. This can be explained due to not having to find the LU decomposition for every iteration. Finally, it seems like Neville's theorem gives the most accurate results, even though it takes more time to calculate it. 
 
