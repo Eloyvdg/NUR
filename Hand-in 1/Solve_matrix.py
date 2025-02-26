@@ -63,7 +63,7 @@ class solver():
         iterations: the amount of iterations wanted'''
         start = solver(self.x, self.y)
         b = start.solve()        
-        original = _vandermonde(self.x)
+        original = solver._vandermonde(self.x)
         for i in range(iterations): 
             error = original @ b - self.y
             improved = solver(self.x, error)
