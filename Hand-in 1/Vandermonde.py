@@ -16,13 +16,6 @@ x=data[:,0]
 y=data[:,1]
 xx=np.linspace(x[0],x[-1],1001) #x values to interpolate at
 
-#Insert your own code to calculate interpolated y values here!
-#The plotting code below assumes you've given the interpolated
-#values for 2a suffix "a", those for 2b "b", and those for 2c 
-#"c1" and "c10" – feel free to change these
-#Note that you interpolate to xx for the top panel but to
-#x for the bottom panel (since we can only compare the accuracy
-#to the given points, not in between them)
 yya=np.zeros(1001,dtype=np.float64) #replace!
 ya=np.zeros(len(x),dtype=np.float64) #replace!
 
