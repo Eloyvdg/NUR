@@ -12,7 +12,7 @@ class Interpolation:
     def __init__(self, xdata, ydata):
         '''
         self.xdata = xdata
-        self.ydata = ydata
+        self.ydata = ydata'''
         
     def _bisection(self, x): 
     ''' Performs a bisection to a given x.
