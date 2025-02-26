@@ -22,7 +22,7 @@ ya=np.zeros(len(x),dtype=np.float64) #replace!
 # Use a single LU decomposition to find the 19th order polynomial
 start = solver(x,y)
 b = start.solve()
-print('The resulting vector after solving with LU decomposition is' + r'\textbf{c}' + f'is {b}')
+print(f'The resulting vector after solving with LU decomposition is \textbf{c} = {b}')
 
 for i in range(len(xx)): 
     yya[i] = np.dot(b, xx[i]**np.arange(0,20))
