@@ -57,7 +57,7 @@ where $x_j$ is the x-value at index j, $x_i$ the x-value at index i, and x the x
 \end{figure}
 
 \subsection{Exercise c}
-For this subquestion, we have to try to improve the interpolation via the LU decomposition by iterating. This iterative process is based on solving \textbf{$\delta$c}, which can be calculated via \textbf{Vc'} - \textbf{y}, where \textbf{c'} is the first found solution. The improved solution is then \textbf{c"} = \textbf{c'} - \textbf{$\delta$c}. By iterating over this process, we can possibly further improve the result. As we have overwritten the original matrix \textbf{V} with the LU decomposition, we have to find this back by multiplying the lower and upper matrix with each other. The results of doing this once and 10 times is shown in Figure \ref{fig:2c}. The results are very similar to the original LU decomposition. Therefore, it could be the case we already found the solution with the smallest error with 0 zero iterations.
+For this subquestion, we have to try to improve the interpolation via the LU decomposition by iterating. This iterative process is based on solving \textbf{$\delta$c}, which can be calculated via \textbf{Vc'} - \textbf{y}, where \textbf{c'} is the first found solution. The improved solution is then \textbf{c"} = \textbf{c'} - \textbf{$\delta$c}. By iterating over this process, we can possibly further improve the result. The results of doing this once and 10 times is shown in Figure \ref{fig:2c}. The results are very similar to the original LU decomposition. Therefore, it could be the case we already found the solution with the smallest error with 0 zero iterations.
 
 \begin{figure}[h!]
   \centering
