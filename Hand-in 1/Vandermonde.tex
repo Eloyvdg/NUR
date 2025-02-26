@@ -25,7 +25,7 @@ Eventually, we want find \textbf{c} in \textbf{Vc} = \textbf{y}, where y is the 
 \end{equation}
 In the equation for forward substitution we can skip the division by $\alpha_{ii}$, as we set these to 1. Furthermore, for both substitutions, we can overwrite the vector \textbf{c} to save memory. Now we have found \textbf{c}, we can calculate the polynomial corresponding to this vector. The result of \textbf{c} is given below: 
 
-The corresponding figure with interpolation via LU decomposition is shown in Figure \ref{fig:LU.png}. 
+The corresponding figure with interpolation via LU decomposition is shown in Figure \ref{fig:2a.png}. 
 
 \begin{figure}[h!]
   \centering
@@ -42,7 +42,7 @@ Now we know the closest real points next to the value we want to interpolate at,
 
 The next step is to loop over the order k from 1 through M-1, where M is the amount of points around the x-value we want to interpolate at and equal to the order -1. Next, we loop over the intervals [$x_i, x_j$] with j = k + i and i from 0 through M - 1 - K. The values are then updated according Equation \ref{eq:Lagrange}.
 
-\begin{equation}
+\begin{equation}\label{Lagrange}
     P(x) = \sum^{M-1}_{i=0}{\frac{(x_j - x)F_i(x) - (x-x_i)G_j(x)}{x_j-x_i}},
 \end{equation}
 where $x_j$ is the x-value at index j, $x_i$ the x-value at index i, and x the x-value where we want to interpolate. Furthermore, $F_i(x)$ is the exact solution at i and $G_j(x)$ is the exact solution at j. We update the values of P by overwriting previous orders. The result of this is shown in Figure \ref{fig:2b}.
