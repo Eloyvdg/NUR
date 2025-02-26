@@ -89,14 +89,14 @@ line,=axs[0].plot(xx,yya,color='orange')
 line.set_label('Via LU decomposition')
 axs[0].legend(frameon=False,loc="lower left")
 axs[1].plot(x,abs(y-ya),color='orange')
-plt.savefig('my_vandermonde_sol_2a.png',dpi=600)
+plt.savefig('plots/my_vandermonde_sol_2a.png',dpi=600)
 
 #For questions 2b and 2c, add this block
 line,=axs[0].plot(xx,yyb,linestyle='dashed',color='green')
 line.set_label('Via Neville\'s algorithm')
 axs[0].legend(frameon=False,loc="lower left")
 axs[1].plot(x,abs(y-yb),linestyle='dashed',color='green')
-plt.savefig('my_vandermonde_sol_2b.png',dpi=600)
+plt.savefig('plots/my_vandermonde_sol_2b.png',dpi=600)
 
 #For question 2c, add this block too
 line,=axs[0].plot(xx,yyc1,linestyle='dotted',color='red')
@@ -106,7 +106,7 @@ line,=axs[0].plot(xx,yyc10,linestyle='dashdot',color='purple')
 line.set_label('LU with 10 iterations')
 axs[1].plot(x,abs(y-yc10),linestyle='dashdot',color='purple')
 axs[0].legend(frameon=False,loc="lower left")
-plt.savefig('my_vandermonde_sol_2c.png',dpi=600)
+plt.savefig('plots/my_vandermonde_sol_2c.png',dpi=600)
 
 #Don't forget to caption your figures to describe them/
 #mention what conclusions you draw from them!
