@@ -13,18 +13,14 @@ xi = 1e-15
 def equilibrium1(T, Z = Z, Tc = Tc, psi=psi):
     return psi*Tc*k - (0.684 - 0.0416 * np.log(T/(1e4 * Z*Z)))*T*k
 
-def equilibrium1_diff(T, Z = Z, Tc = Tc, psi = psi):
-    return k * (1.02555 - 0.0416 * np.log(T/(Z*Z)))
-
 def equilibrium2(T, nH, Z = Z, Tc = Tc, psi = psi, A = A, xi = xi):
-    return (psi*Tc - (0.684 - 0.0416 * np.log(T/(1e4 * Z*Z)))*T - .54 * ( T/1e4 )**.37 * T)*k*nH*aB + A*xi + 8.9e-26 * (T/1e4)
+    return (psi*Tc - (0.684 - 0.0416 * np.log(T/(1e4 * Z*Z))) - .54 * ( T/1e4 )**.37 * T)*k*nH*aB + A*xi + 8.9e-26 * (T/1e4)
 
-def equilibrium2_diff(T, nH, Z=Z, psi=psi, Tc=Tc, A = A, xi= xi):
-    part1 = -0.694 + 0.416 * (1 + np.log(T/(1e4 * Z*Z) ) )
+def equilibrium2_diff(T, nH, Z=Z, psi=psi, Tc=Tc, A = A, xi= xi): 
+    part1 = -0.684 + 0.0416 * (1 + np.log(T/(1e4 * Z*Z) ) ) * k * nH * aB
     part2 = -0.54 * 1.37 * ( T/1e4 )**.37 * k * nH * aB
     part3 = 8.9e-30
-    # term2 = -0.7398 * (T / 1e4) ** 0.37
-    # term3 = 8.9e-30
+
     return part1 + part2 + part3
 
 def bisection(xmin, xmax, function): 
@@ -35,7 +31,7 @@ def bisection(xmin, xmax, function):
         c = (xmin + xmax)*0.5
         if function(a)*function(c) < 0: 
             xmax = c
-        else: 
+        else:
             xmin = c
     return c
 
@@ -64,18 +60,19 @@ def false_position(a, b, n, target, function):
         
     return best, error
 
-def Newton_Raphsen(x, n, target, nH, function, diff_function): 
+def Newton_Raphsen(x, n, target, function, diff_function): 
     best = x
     for i in range(n): 
-        print(i)
-        new = best - function(x, nH)/diff_function(x, nH)
-        print(new)
+        # print(i)
+        new = best - function(best) / diff_function(best)
+        # print(new)
         error = np.abs(best - new)
-        best = new
-        print(error)
+        # print(error)
         
         if error < target: 
             break
+        best = new
+
         
     return best, error
         
@@ -85,7 +82,7 @@ def func_root(x):
 
 xmin, xmax = 1, 1e7
 
-root_Newton2 = Newton_Raphsen((xmax-xmin)*0.5, 100, 1e-12, 1e-4, equilibrium2, equilibrium2_diff)
+# root_Newton2 = Newton_Raphsen((xmax-xmin)*0.5, 100, 1e-12, 1e-4, equilibrium2, equilibrium2_diff)
 
 array = np.arange(xmin, xmax)
 plt.plot(array, equilibrium2(array, 1e-4))
@@ -95,10 +92,20 @@ plt.show()
 root_eq1, error_eq1 = false_position(xmin, xmax, 100, 0.1, equilibrium1)
 root_scipy = rs(equilibrium1, bracket = [xmin, xmax])
 
-root_eq2 = Newton_Raphsen((xmax-xmin)*0.5, 100, 1e-12, 1e-4, equilibrium2, equilibrium2_diff)
-root_scipy2 = rs(equilibrium2, 1e-4, bracket = [1, 1e15])
+xmin, xmax = 1, 1e15
 
-plt.axvline(root_eq1)
-plt.plot(array, equilibrium1(array, 1e-4))
-plt.yscale('log')
-plt.show()
+n_list = [1e-4, 1, 10**4]
+for i in range(len(n_list)):
+    eq2 = lambda x: equilibrium2(x, n_list[i]) * 1e15
+    eq2_diff = lambda x: equilibrium2_diff(x, n_list[i])
+    
+    # false_pos_guess, error_guess = false_position(xmin, xmax, 1000, 1e-7, eq2)
+    root_eq2 = Newton_Raphsen(5e14, 100, 1e-12, eq2, eq2_diff)
+
+# root_eq2 = Newton_Raphsen((xmax-xmin)*0.5, 100, 1e-12, eq2, eq2_diff)
+# root_scipy2 = rs(eq2, x0 = (xmax-xmin)*0.5, fprime = eq2_diff, method = 'newton')
+
+# plt.axvline(root_eq1)
+# plt.plot(array, equilibrium1(array, 1e-4))
+# plt.yscale('log')
+# plt.show()
