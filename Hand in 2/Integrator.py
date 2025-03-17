@@ -9,32 +9,32 @@ a = np.uint64(4294957665)
 
 seed = time.time() 
 
-def XOR(x, a1=a1, a2=a2, a3=a3): 
-    x = np.uint64(x)
-    x = x ^ (x >> a1)
-    x = x ^ (x << a2)
-    x = x ^ (x >> a3)
-    return x
+# def XOR(x, a1=a1, a2=a2, a3=a3): 
+#     x = np.uint64(x)
+#     x = x ^ (x >> a1)
+#     x = x ^ (x << a2)
+#     x = x ^ (x >> a3)
+#     return x
 
-def Carry(x, a=a):
-    x = np.uint64(x)
-    x = a * (x & (np.uint64(2**(32)) - np.uint64(1))) + (x >> np.uint64(32))
-    return np.uint32(x)
+# def Carry(x, a=a):
+#     x = np.uint64(x)
+#     x = a * (x & (np.uint64(2**(32)) - np.uint64(1))) + (x >> np.uint64(32))
+#     return np.uint32(x)
 
-def random_numbers( n, a_min, a_max, seed1 = time.time(), seed2 = time.time()): 
-    state1 = np.uint64(seed1)
-    state2 = np.uint64(seed2)
+# def random_numbers( n, a_min, a_max, seed1 = time.time(), seed2 = time.time()): 
+#     state1 = np.uint64(seed1)
+#     state2 = np.uint64(seed2)
     
-    rand_numbers = []
-    for i in range(n):
-        state1 = XOR(state1)
-        state2 = Carry(state2)
-        rand_num = a_min + (a_max - a_min) * np.uint32(state1 ^ state2) * 2**-32
-    seed = rand_num
-    rand_numbers += rand_num
+#     rand_numbers = []
+#     for i in range(n):
+#         state1 = XOR(state1)
+#         state2 = Carry(state2)
+#         rand_num = a_min + (a_max - a_min) * np.uint32(state1 ^ state2) * 2**-32
+#     seed = rand_num
+#     rand_numbers += rand_num
     
     
-    return rand_num
+#     return rand_num
 
 def trapezoid(h, array, function):   
     result = 0
@@ -66,7 +66,6 @@ def Romberg(a, b, m, function):
         r[i] = 0.5 * (r[i-1] + delta * r[i])
         
         N_p *= 2    
-    print(r)
     N_p = 1
     for i in range(1,m): 
         N_p *= 4
@@ -90,6 +89,63 @@ def n(x, A=A, Nsat=Nsat, a=a, b=b, c=c):
 
 def func_integrate(x, A=A, Nsat=Nsat, a=a, b=b, c=c):
     return (A*Nsat*((x/b)**(a-3))*np.exp(-(x/b)**c)) * x**2 * 4 * np.pi
+
+
+def quick_sort(array): 
+    
+    middle_idx = len(array)//2
+    first, last, middle = array[0], array[-1], array[middle_idx]
+    
+    if first >= middle:
+        array[0], array[middle_idx], array[middle_idx], array[0]
+    if middle >= last: 
+        array[-1], array[middle_idx] = array[middle_idx], array[-1]
+    if first >= last: 
+        array[0], array[-1] = array[-1], array[0]
+        
+    pivot = array[middle_idx]
+    
+    if len(array) < 3: 
+        return
+       
+    i_flag, j_flag = False, False
+    j = len(array) - 1
+    i = 0
+    
+    while j > i: 
+        
+        if i_flag == False:
+            if array[i] >= pivot:
+                i_switch = i
+                i_flag = True
+            else:
+                i += 1
+        
+        if j_flag == False:
+            if array[j] <= pivot:
+                j_switch = j
+                j_flag = True
+            else:
+                j -= 1
+            
+        if i_flag * j_flag:
+            if array[i_switch] != array[j_switch]:
+                array[i_switch], array[j_switch] = array[j_switch], array[i_switch]
+            else: 
+                i += 1
+            i_flag, j_flag = False, False
+    
+    loc_pivot = np.where(array == pivot)[0][0]
+
+
+    if len(array[:loc_pivot]) > 1: 
+        quick_sort(array[:loc_pivot])
+        
+    if len(array[loc_pivot:]) > 1: 
+        quick_sort(array[loc_pivot+1:])
+        
+    return array
+
 
 result, result_error = Romberg(1e-6,5, 15, func_integrate)
 A = 1 / result[0]
@@ -146,11 +202,72 @@ ax.set(xlim=(xmin, xmax), ylim=(10**(-3), 10), yscale='log', xscale='log',
 ax.legend()
 plt.savefig('my_solution_1b.png', dpi=600)
 
+
+
+def fisher_yates(array, N):
+    for i in range(len(array))[::-1]: 
+        rand_int = int(RNG.RNG().random_numbers(0,i))
+        array[i], array[rand_int] = array[rand_int], array[i]
+            
+    return array[:N]
+
+selection = fisher_yates(np.array(accepted_x), 100)
+sorted_selection = quick_sort(selection)
+
+
 #Cumulative plot of the chosen galaxies (1c)
 chosen = xmin + np.sort(np.random.rand(Nsat))*(xmax-xmin) #replace!
 fig1c, ax = plt.subplots()
-ax.plot(chosen, np.arange(100))
+ax.plot(sorted_selection, np.arange(100))
 ax.set(xscale='log', xlabel='Relative radius', 
        ylabel='Cumulative number of galaxies',
        xlim=(xmin, xmax), ylim=(0, 100))
 plt.savefig('my_solution_1c.png', dpi=600)
+
+
+def analytical_diff(x, A=A, Nsat=Nsat, a=a, b=b, c=c): 
+    return ((A * Nsat * b**3 * (x/b)**a * np.exp(-(x/b)**c) * (a - c * (x/b)**c - 3))* x**-4)
+    
+def differentation(x, h, function): 
+    if not callable(function): 
+        raise ValueError
+    
+    df = ( function(x+h) - function(x-h) )/ (2*h) 
+    return df
+
+def Ridder(x, h, d, e, max_iters, function):
+
+    Ridder_matrix = np.zeros([max_iters, len(x)])
+    inv_d = 1/d  
+    
+    for i in range(max_iters): 
+        Ridder_matrix[i,:] = differentation(x, h * inv_d ** i, function)
+        
+        
+    last = Ridder_matrix[0].copy()
+    previous_error = np.inf
+    for i in range(max_iters - 1): 
+        j = i+1
+        Ridder_matrix[i] = (d**(2*j) * Ridder_matrix[i+1] - Ridder_matrix[i])/ (d**(2*j) - 1)
+        error = np.abs(last - Ridder_matrix[i])
+        # print(error)
+        last = Ridder_matrix[0].copy()
+        if np.any(error < e): 
+            print(f'Error is reached at iteration {i+1}')
+            break
+        
+        if np.any(error > previous_error): 
+            print(f'Error is growing after iteration {i+1}')
+            return Ridder_matrix[0]
+        
+        previous_error = error
+    return Ridder_matrix[0]
+
+def test(x):
+    return x**3
+
+result_diff = Ridder(np.array([1]), 0.1, 2, 1e-10, 100, n)[0] 
+result_analytical_diff = analytical_diff(1)
+
+print(result_diff)
+print(result_analytical_diff)
