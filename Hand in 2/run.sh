@@ -7,19 +7,18 @@ if [ ! -d "plots" ]; then
 fi
 rm -rf plots/*
 
-if [ ! -e Vandermonde.txt ]; then
-  wget https://home.strw.leidenuniv.nl/~daalen/Handin_files/Vandermonde.txt 
-fi
-
 # Script that returns a plot
 echo "Run the first script ..."
-python3 Poisson.py > poisson.txt
+python3 Exercise1abc.py > exercise1a.txt
 
 echo "Run the second script ..."
-python3 Vandermonde.py > vandermonde_output.txt
+python3 Exercise1d.py > exercise1d.txt
 
 echo "Run the third script ..."
-python3 Timeit.py > timeit.txt
+python3 Exercise2a.py > exercise2a.txt
+
+echo "Run the third script ..."
+python3 Exercise2b.py > exercise2b.txt
 
 echo "Generating the pdf"
 
