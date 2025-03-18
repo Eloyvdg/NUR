@@ -1,0 +1,22 @@
+\section{Hearting and cooling in HII regions}
+\lstinputlisting{Root.py}
+\subsection{Exercise a}
+\lstinputlisting{Exercise2a.py}
+For question 2a we want to find the equilibrium temperature between cooling and heating, which we do using a root finding algorithm. The algorithm we will use is the false position algorithm, which searches the root in the bracket [1, 1e7]. The root we find with this is at a temperature of:
+
+\lstinputlisting{exercise2a.txt}
+
+\subsection{Exercise b}
+\lstinputlisting{Exercise2b.py}
+For question 2b, we have to find the root again, but this time with a more complex and complete heating and cooling. As the false position is not as fast and accurate for this equation, we will use Newton-Ralphson root finding. This algorithm is partly based on the derivative of the function you want the find the root of. In our case the derivative is equation \ref{}.
+
+\begin{equation}
+    \frac{df(T)}{dT} = (-0.684 + 0.0416 * (1 + \ln{\frac{T_4}{Z^2}} ) - 0.54 * 1.27 * T_4^{0.37}) * k_B n_H \alpha_B + 8.9\cdot10^{-30}
+\end{equation}
+
+Now, with Newton-Ralphson, we can find the root at different densities. The starting point is given as the middle of 1 and 1e15. The results are shown below:
+
+\lstinputlisting{exercise2b.txt}
+
+From these results, we see that for higher densities the equilibrium temperature decreases significantly. Besides that, for a density of n = 1 $\mathrm{cm^{-3}}$, the relative error is 0, which means the root is found within machine precision. 
+
