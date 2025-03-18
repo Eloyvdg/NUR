@@ -11,8 +11,6 @@ def func_integrate(x, A=A, Nsat=Nsat, a=a, b=b, c=c):
     """Function to integrate"""
     return (A*((x/b)**(a-3))*np.exp(-(x/b)**c)) * x**2 * 4 * np.pi
 
-
-
 xmin, xmax = 10**-4, 5
 
 integration_init = Integration.Integrator(func_integrate, xmin, xmax)
@@ -24,19 +22,6 @@ def n(x, A=A_new, Nsat=Nsat, a=a, b=b, c=c):
 
 def analytical_diff(x, A=A_new, Nsat=Nsat, a=a, b=b, c=c): 
     return ((A * Nsat * b**3 * (x/b)**a * np.exp(-(x/b)**c) * (a - c * (x/b)**c - 3))* x**-4)
-    
-def numdens_derivative(x, norm=A_new, Nsat=Nsat, a=a, b=b, c=c):
-    return (
-        (
-            norm 
-            * Nsat 
-            * b ** 3 
-            * np.exp(-(x / b) ** c) 
-            * (x / b) ** a
-            * (-3 + a - c * (x / b) ** c)
-        )
-        / x ** 4
-    )
 
 def central_differentation(x, h, function): 
     """Definition to calculate the central differentation"""
@@ -85,9 +70,6 @@ def Ridder(x, h, d, e, max_iters, function):
 
 result_diff = Ridder(np.array([1]), 0.1, 2, 1e-10, 100, n)[0] 
 result_analytical_diff = analytical_diff(1)
-result_analytical_diff_lucas = numdens_derivative(1)
-
 
 print(f'The result using Ridder algorithm is {result_diff}')
 print(f'The analytical result is {result_analytical_diff}')
-print(f'Lucas: The analytical result is {result_analytical_diff_lucas}')
