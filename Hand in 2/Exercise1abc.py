@@ -79,7 +79,7 @@ def func_integrate(x, A=A, Nsat=Nsat, a=a, b=b, c=c):
     """
     Function to integrate
     """
-    return (A*Nsat*((x/b)**(a-3))*np.exp(-(x/b)**c)) * x**2 * 4 * np.pi
+    return (A*((x/b)**(a-3))*np.exp(-(x/b)**c)) * x**2 * 4 * np.pi
 
 xmin, xmax = 10**-4, 5 # boundaries of integral
 
