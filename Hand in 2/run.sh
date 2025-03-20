@@ -17,7 +17,7 @@ python3 Exercise1d.py > exercise1d.txt
 echo "Run the third script ..."
 python3 Exercise2a.py > exercise2a.txt
 
-echo "Run the third script ..."
+echo "Run the fourth script ..."
 python3 Exercise2b.py > exercise2b.txt
 
 echo "Generating the pdf"
