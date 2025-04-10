@@ -30,7 +30,7 @@ def downhill_simplex(simplex_start, func, max_iter, target):
         
         simplex = simplex[sorted_idx,:]
         # print(simplex)
-        # print(simplex)
+        print(simplex)
         # print(simplex)
         centroid = np.sum(simplex[:-1,:], axis = 0)/(simplex.shape[1])    
         
@@ -45,22 +45,29 @@ def downhill_simplex(simplex_start, func, max_iter, target):
         func_xtry = func(x_try)
         
         if y_sorted[0] <= func_xtry < y_sorted[-1]: # I
+            print('I')
             simplex[-1,:] = x_try
             
         elif func_xtry < y_sorted[0]:   #II
+            print('II')
             x_exp = 2 * x_try - centroid
             if func(x_exp) < func_xtry: 
                 simplex[-1,:] = x_exp
             else: 
                 simplex[-1,:] = x_try
                 
-        elif func_xtry  >= y_sorted[-1]:    # III
+        else: # func_xtry  >= y_sorted[-1]:    # III
             x_try = np.array([0.5 * (centroid + simplex[-1,:])])[0]
             func_xtry = func(x_try)
             if func_xtry < y_sorted[-1]: 
+                print('III')
                 simplex[-1,:] = x_try
             else: 
-                simplex[1:, :] = 0.5 * (simplex[0,:] + simplex[1:,:]) #IV
+                print('IV')
+                for i in range(1, simplex.shape[1]):
+                    simplex[i, :] = 0.5 * (simplex[0,:] + simplex[i,:]) #IV
+        # else: 
+        #     print('wtf')
             
     return simplex[0,:]
 
