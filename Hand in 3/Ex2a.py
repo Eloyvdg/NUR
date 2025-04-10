@@ -15,16 +15,28 @@ def N(x,A,Nsat,a,b,c):
 
 def likelihood(A, Nsat, point, edges, bins): 
     a, b, c = point
-    func_integrate = lambda x: x**2 * n(x, A, Nsat, a, b, c)
+    func_integrate = lambda x: 4*np.pi *x**2 * n(x, A, Nsat, a, b, c)
     result, result_error = romberg(xmin, xmax, 10, func_integrate)
-    A_new = 1/(result[0]*4*np.pi)
+    A_new = 1/(result[0])
     likelihood = 0
     for i in range(len(edges)-1):
-        # func_integrate = lambda x, A: func_integrate(x, A_new)
         variance, error = romberg(edges[i], edges[i+1], 5, lambda x: A_new * func_integrate(x))
-        likelihood += (bins[i] - variance[0])**2/(variance[0])   
+        bins_var = bins.copy()
+        bins_var[bins_var == 0] = 1
+        likelihood += (bins[i] - variance[0])**2/(bins_var[i])   
     
     return likelihood
+
+def likelihood_poison(A, Nsat, point, edges, bins, radii): 
+    a, b, c = point
+    func_integrate = lambda x: 4*np.pi *x**2 * n(x, A, Nsat, a, b, c)
+    result, result_error = romberg(xmin, xmax, 10, func_integrate)
+    A_new = 1/(result[0])
+    
+    likelihood = 0
+    for i in range(len(radii)): 
+        likelihood -= np.log(N(radii[i], A_new, Nsat, a, b, c))
+        
 
 def readfile(filename):
     f = open(filename, 'r')
@@ -79,16 +91,26 @@ xmin, xmax = 1e-4, 5. # replace by your choices
 n_bins = 100 # replace by your binning
 edges = np.exp(np.linspace(np.log(xmin), np.log(xmax), n_bins+1))
 ylim_min = [1e-8, 1e-12, 1e-5, 1e-3, 1e-2]
-ylim_max = [10, 1000    , 1000   , 1e3 , 1e4]
+ylim_max = [10, 1e3    , 1e3   , 1e3 , 1e4]
 fig1b, ax = plt.subplots(3,2,figsize=(6.4,8.0))
 for i in range(5):
     Nsat = Nsat_calc[i] # replace by actual appropriate number for mass bin i
     x_radii = radii[i] # replace by actual data for mass bin i
     
-    simplex = np.array([[1.5, 2.5, 0.2],
-                            [1, 0.5, 1.8],
-                            [1.8, 1.6, 1],
-                            [0.8, 2.3, 5.5]]) * 10
+    simplex = np.array([[2.4, 0.2, 1.6], 
+                        [2.3, 0.1, 1.2], 
+                        [2.0, 0.5, 1.4], 
+                        [2.6, 1.1, 1.8]])
+    
+    # simplex = np.array([[1.31420016, 1.11502032, 3.13383544], 
+    #                         [1.31420016, 1.11502032, 3.13383544], 
+    #                         [1.31420016, 1.11502032, 3.13383544], 
+    #                         [1.31420016, 1.11502032, 3.13383544]]) * np.random.uniform(0.95, 1.05, size=(4,3))
+    
+    # simplex = np.array([[1.5, 2.5, 0.2],
+    #                         [1, 0.5, 1.8],
+    #                         [1.8, 1.6, 1],
+    #                         [0.8, 2.3, 5.5]]) * 10
     
     print('AHHHH')
     
@@ -96,19 +118,16 @@ for i in range(5):
     binned_data=np.histogram(x_radii,bins=edges)[0]/Nhalo[i]/np.diff(edges)
     
     likelihood_calc = lambda point: likelihood(1, Nsat, point, edges, binned_data)
-    result_downhill = downhill_simplex(simplex, likelihood_calc, 1000, 1e-5)
+    result_downhill = downhill_simplex(simplex, likelihood_calc, 1000, 1e-10)
     print(result_downhill)
-    best_a, best_b, best_c = result_downhill
+    best_a, best_b, best_c = result_downhill #[1.53874748,   0.47773451,   1.19624515]
     
     func_integrate = lambda x: 4* np.pi * x**2 * n(x, 1, Nsat, best_a, best_b, best_c)
     result_A, result_error_A = romberg(xmin, xmax, 10, func_integrate)
         
     x_array = np.logspace(-4, np.log10(5), 100)
 
-    
-
     # print(result)
-    
     
     row=i//2
     col=i%2
@@ -127,15 +146,39 @@ plt.savefig('my_solution_1b.png', dpi=600)
 # Plot 1c (same code as above)
 # fig1c, ax = plt.subplots(3,2,figsize=(6.4,8.0))
 # for i in range(5):
-#     Nsat = 100 # replace by actual appropriate number for mass bin i
-#     x_radii = np.random.rand(10000) * (xmax-xmin) # replace by actual data for mass bin i
-#     Ntilda = np.sort(np.random.rand(n_bins)) * (xmax-xmin) # replace by fitted model for mass bin i integrated per radial bin
+#     Nsat = Nsat_calc[i] # replace by actual appropriate number for mass bin i
+#     x_radii = radii[i] # replace by actual data for mass bin i
+    
+#     # Ntilda = np.sort(np.random.rand(n_bins)) * (xmax-xmin) # replace by fitted model for mass bin i integrated per radial bin
 #     binned_data=np.histogram(x_radii,bins=edges)[0]/Nsat
+    
+#     simplex = np.array([[2.4, 0.2, 1.6], 
+#                         [2.3, 0.1, 1.2], 
+#                         [2.0, 0.5, 1.4], 
+#                         [2.6, 1.1, 1.8]])
+    
+#     likelihood_calc = lambda point: likelihood_poison(1, Nsat, point, edges, binned_data, x_radii)
+#     result_downhill = downhill_simplex(simplex, likelihood_calc, 1000, 1e-10)
+#     best_a, best_b, best_c = result_downhill
+
+#     func_integrate = lambda x: 4* np.pi * x**2 * n(x, 1, Nsat, best_a, best_b, best_c)
+#     result_A, result_error_A = romberg(xmin, xmax, 10, func_integrate)
+    
+#     x_array = np.logspace(-4, np.log10(5), 100)
+
+
+    
+
 #     row=i//2
 #     col=i%2
 #     ax[row,col].step(edges[:-1], binned_data, where='post', label='binned data')
-#     ax[row,col].step(edges[:-1], Ntilda, where='post', label='best-fit profile')
+#     ax[row,col].plot(x_array, N(x_array, 1/result_A[0], Nsat, best_a, best_b, best_c), label='best-fit profile')
+
+#     # ax[row,col].step(edges[:-1], Ntilda, where='post', label='best-fit profile')
 #     ax[row,col].set(yscale='log', xscale='log', xlabel='x', ylabel='N', title=f"$M_h \\approx 10^{{{11+i}}} M_{{\\odot}}/h$")
+#     ax[row,col].set_ylim(ylim_min[i], ylim_max[i])
+
+
 # ax[2,1].set_visible(False)
 # plt.tight_layout()
 # handles,labels=ax[2,0].get_legend_handles_labels()
