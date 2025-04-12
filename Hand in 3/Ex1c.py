@@ -44,16 +44,8 @@ def readfile(filename):
 
 
 #Call this function as: 
-Nsat_calc = []
-radii = []
-Nhalo = []
 filenames = ['satgals_m11.txt', 'satgals_m12.txt', 'satgals_m13.txt', 'satgals_m14.txt', 'satgals_m15.txt']
-for i in filenames: 
-    radius, nhalo = readfile(i)
-    radii += [radius]
-    Nhalo += [nhalo]
-    Nsat_calc += [len(radius)/nhalo]
-    
+
 xmin, xmax = 1e-4, 5.
 n_bins = 100 
 edges = np.exp(np.linspace(np.log(xmin), np.log(xmax), n_bins+1))
