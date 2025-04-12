@@ -7,6 +7,26 @@ if [ ! -d "plots" ]; then
 fi
 rm -rf plots/*
 
+if [ ! -e satgals_m11.txt ]; then
+  wget https://home.strw.leidenuniv.nl/~daalen/Handin_files/satgals_m11.txt
+fi
+
+if [ ! -e satgals_m12.txt ]; then
+  wget https://home.strw.leidenuniv.nl/~daalen/Handin_files/satgals_m12.txt
+fi
+
+if [ ! -e satgals_m13.txt ]; then
+  wget https://home.strw.leidenuniv.nl/~daalen/Handin_files/satgals_m13.txt
+fi
+
+if [ ! -e satgals_m14.txt ]; then
+  wget https://home.strw.leidenuniv.nl/~daalen/Handin_files/satgals_m14.txt
+fi
+
+if [ ! -e satgals_m15.txt ]; then
+  wget https://home.strw.leidenuniv.nl/~daalen/Handin_files/satgals_m15.txt
+fi
+
 # Script that returns a plot
 echo "Run the first script ..."
 python3 Ex1a.py > Ex1a.txt
