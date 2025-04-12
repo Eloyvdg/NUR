@@ -37,8 +37,8 @@ python3 Ex1b.py > Ex1b.txt
 echo "Run the third script ..."
 python3 Ex1c.py > Ex1c.txt
 
-echo "Run the fourth script ..."
-python3 Ex1d.py > Ex1d.txt
+#echo "Run the fourth script ..."
+#python3 Ex1d.py > Ex1d.txt
 
 echo "Generating the pdf"
 
