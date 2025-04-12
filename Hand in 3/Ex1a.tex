@@ -7,7 +7,7 @@ In the first exercise, we have to find the maximum of the following equation:
 \begin{equation}
     N(x)dx = A <Nsat> \left( \frac{a}{b} \right)^{a-3} \exp(\left[ - \left( \frac{x}{b} \right)^c \right])
 \end{equation}
-The following  assumptions are made for this exercise: a = 2.4, b = 0.25, c = 1.6, $x_{max}$ = 5, <Nsat> = 100 and A = $256/(5\pi^{3/2})$. In order to find the maximum of this function, a minus sign is added to the function. This changes the problem to a minimization problem. Now we can use golden section search to find this minimum. The initial bracket for this golden section search is found using the bracketing algorithm. The input for this bracketing algorithm is an $x_{min}$ of $10^{-4}$ and $x_{max}$ of 1, as my code is not able to find a bracket with an $x_{max}$ of 5.Using these algorithms gives us the following result: 
+The following  assumptions are made for this exercise: a = 2.4, b = 0.25, c = 1.6, $x_{max}$ = 5, $<$Nsat$>$ = 100 and A = $256/(5\pi^{3/2})$. In order to find the maximum of this function, a minus sign is added to the function. This changes the problem to a minimization problem. Now we can use golden section search to find this minimum. The initial bracket for this golden section search is found using the bracketing algorithm. The input for this bracketing algorithm is an $x_{min}$ of $10^{-4}$ and $x_{max}$ of 1, as my code is not able to find a bracket with an $x_{max}$ of 5.Using these algorithms gives us the following result: 
 \\
 \\
 \lstinputlisting{Ex1a.txt}
