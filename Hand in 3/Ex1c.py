@@ -23,7 +23,9 @@ def normalize(A, Nsat, a, b, c, xmin=xmin, xmax = xmax):
 def likelihood_poisson(A, Nsat, point, edges, bins, radii): 
     '''Function to calculate the Poisson likelihoof (without constant factors)'''
     A_new, func_integrate = normalize(A, Nsat, *point)
-    likelihood = -np.sum(np.log(A_new * func_integrate(radii)), axis = 0)
+    result = A_new * func_integrate(radii)
+    result = result[result != 0]
+    likelihood = -np.sum(np.log(result), axis = 0)
     return likelihood
         
 def readfile(filename):
