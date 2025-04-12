@@ -6,7 +6,6 @@ def quick_sort(array):
     array: array with numbers to sort
     """
     array = np.array(array)
-    # print(array)
     middle_idx = len(array)//2
     first, last, middle = array[0], array[-1], array[middle_idx]
     
