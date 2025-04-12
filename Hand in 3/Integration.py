@@ -4,27 +4,24 @@ import numpy as np
 def romberg(a, b, m, function): 
     """
     Romberg integration algorithm.
+    input: 
+    a: array of lower limits
+    b: array of upper limits
     m: Order of integration
+    function: function to integrate
     """
-    # print(a)
     r = np.zeros((m, len(a)))
     
-    # print(r)
     h = b - a
-    # print(h)
-    # Calculate r with decreasing stepsize h
+    # Calculate r with decreasing stepsize h for all limits in array
     r[0,:] = 0.5 * h * (function(a) + function(b))
-    # print(r[0,:], ' AHH')
     
-    # print((r))
     N_p = 1
     for i in range(1,m): 
         r[i,:] = 0 
         delta = h
         h = 0.5*h
         x = a + h
-        # print(x)
-        # print(a, h)
         for j in range(N_p): 
             r[i,:] += function(x)
             x += delta
@@ -42,6 +39,3 @@ def romberg(a, b, m, function):
                 
     error = np.abs(r[0,:] - r[1,:])
     return r, error
-
-def func(x):
-    return x**2
