@@ -1,8 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from Integration import romberg
-from Minimizing import golden_section
-from Minimizing import downhill_simplex
+from downhill import downhill_simplex
 
 xmin = 1e-4
 xmax = 5
