@@ -5,7 +5,7 @@ For this subquestion, we will try to make a fit again, but this time using a Poi
 \begin{equation}
     -\ln{L} = \sum^{N_p-1}_{i = 0} \ln{[\mu(x_i|a,b,c)] + \int \mu(x_i|a,b,c) dx}, 
 \end{equation}
-where $\mu(x_i|a,b,c)$ is the model, with $x_i$ the data points. The integral is constant if we keep the model normalized. Therefore, we can remove that term for the minimization. Again, we will use a downhill simplex algorithm to find the minimum log likelihood, where we normalize every step. The results are shown below: 
+where $\mu(x_i|a,b,c)$ is the model, with $x_i$ the data points. The integral is constant if we keep the model normalized. Therefore, we can remove that term for the minimization. When we calculate the final minimal likelihood, we add 1 to the found likelihood, which is due to the normalized model. Again, we will use a downhill simplex algorithm to find the minimum log likelihood, where we normalize every step. The results are shown below. The likelihood values are very high, which might indicate that the fitted values are bad. 
 \\
 \\
 \lstinputlisting{Ex1c.txt}
