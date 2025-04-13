@@ -1,8 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from Integration import romberg
-from Minimizing import golden_section
-from Minimizing import downhill_simplex
+from downhill import downhill_simplex
 
 xmin = 1e-4
 xmax = 5
@@ -76,18 +75,20 @@ for i in range(5):
     result_downhill, likelihood_result = downhill_simplex(simplex, likelihood_calc, 1000, 1e-10)
     best_a, best_b, best_c = result_downhill
     
+          
+    func_integrate = lambda x: 4* np.pi *Nsat * x**2 * n(x, 1, Nsat, best_a, best_b, best_c) 
+    result_A, result_error_A = romberg(np.array([xmin]), np.array([xmax]), 10, func_integrate) # Normalize again with bets found parameters
+
+
     print(f''' The best fit paramaters for {filenames[i]} are:
           a = {result_downhill[0]}
           b = {result_downhill[1]}
           c = {result_downhill[2]}''')
           
     print(f''' 
-          The corresponding log likelihood value is: {likelihood_result * Nhalo} \n
+          The corresponding log likelihood value is: {likelihood_result * Nhalo + 1} \n
           ##################################################################\n''')
           
-    func_integrate = lambda x: 4* np.pi *Nsat * x**2 * n(x, 1, Nsat, best_a, best_b, best_c) 
-    result_A, result_error_A = romberg(np.array([xmin]), np.array([xmax]), 10, func_integrate) # Normalize again with bets found parameters
-    
     x_array = np.logspace(-4, np.log10(5), 100)
     
     row=i//2
