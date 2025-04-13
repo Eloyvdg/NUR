@@ -88,6 +88,7 @@ for i in range(5):
           c = {result_downhill[2]}''')
           
     print(f''' 
+          <Nsat> = {Nsat}\n
           The corresponding Chi^2 value is: {likelihood_result * Nhalo} \n
           The corresponding Chi^2/k value is {likelihood_result * Nhalo/k}
           ##################################################################\n''')
