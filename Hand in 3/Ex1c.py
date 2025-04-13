@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from Integration import romberg
-from downhill import downhill_simplex
+from Minimizing import golden_section
+from Minimizing import downhill_simplex
 
 xmin = 1e-4
 xmax = 5
@@ -43,8 +44,10 @@ def readfile(filename):
 
 
 #Call this function as: 
+
 filenames = ['satgals_m11.txt', 'satgals_m12.txt', 'satgals_m13.txt', 'satgals_m14.txt', 'satgals_m15.txt']
 
+    
 xmin, xmax = 1e-4, 5.
 n_bins = 100 
 edges = np.exp(np.linspace(np.log(xmin), np.log(xmax), n_bins+1))
@@ -61,7 +64,7 @@ for i in range(5):
     x_radii, Nhalo = readfile(filenames[i])
     Nsat = len(x_radii)/Nhalo # Calculate Nsat
     
-    k = len(x_radii) - 4
+    k = n_bins - 4
     
     binned_data=np.histogram(x_radii,bins=edges)[0]/Nhalo/np.diff(edges)
     simplex = np.array([[2.4, 0.2, 1.6], 
@@ -79,8 +82,7 @@ for i in range(5):
           c = {result_downhill[2]}''')
           
     print(f''' 
-          The corresponding Chi^2 value is: {likelihood_result * Nhalo} \n
-          The corresponding Chi^2/k value is {likelihood_result * Nhalo/k}
+          The corresponding log likelihood value is: {likelihood_result * Nhalo} \n
           ##################################################################\n''')
           
     func_integrate = lambda x: 4* np.pi *Nsat * x**2 * n(x, 1, Nsat, best_a, best_b, best_c) 
