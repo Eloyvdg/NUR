@@ -142,26 +142,47 @@ def traverse_tree(tree, depth, x_level):
             
     traverse(tree)
     return mapping
-                
-                
+
+def grid(tree, depth): 
     
+    pixels = 2**depth
+    grid = np.zeros((pixels, pixels, pixels))
+    center = tree.box_center
     
+    x_middle = center[0]/pixels
+    def traverse(n): 
+        if n == None: 
+            return
+        if n.depth == depth:
+            x = n.box_center[0]
+            y = n.box_center[1]
+            z = n.box_center[2]
+            ind_z = int((z+x_middle)/(x_middle*2) -1)
+            ind_y = int((y+x_middle)/(x_middle*2) -1)
+            ind_x = int((x+x_middle)/(x_middle*2) -1)
+            grid[ind_x, ind_y, ind_z] = n.mass# /((L/128)**3)
+            
+            return
+        
+        if n.depth <= depth:
+            for child in [n.child1, n.child2, n.child3, n.child4, n.child5, n.child6, n.child7, n.child8]: 
+                traverse(child)
+            
+    traverse(tree)
+    return grid
+                
 
 half_L = 0.5 * L
 center_start = np.array([half_L, half_L, half_L]) 
 tree =  build_tree(np.zeros(8), 0, 7, center_start, pos, 0, Np)
 
-first_octant = tree.child4
-start_ind = first_octant.start_index
-length = first_octant.length
-pos_first = pos[index_array[start_ind:start_ind+length],:]
-
 for level in [3,5,7]: #feel free to change any of this code
     pixels=2**level
     size = L/pixels
+    mass_grid = grid(tree, level)
     massmap=np.zeros((4,pixels,pixels),dtype=np.float32)
-    for i in range(1,5): 
-        massmap[i-1,:,:] = traverse_tree(tree, level, i)
+    for i in range(4): 
+        massmap[i,:,:] = mass_grid[i,:,:]
     
     # TO DO: traverse the octree, fill map massmap[0,:,:] with the masses of nodes at depth 3 and x_index=x_0,
     #        massmap[1,:,:] with the masses of nodes at depth 3 and x_index=x_1, etc; then plot these slices;
@@ -191,121 +212,55 @@ for level in [3,5,7]: #feel free to change any of this code
 # # Question 2b: using the FFT
 
 def FFT(array): 
-    array = np.complex64(array)
-    N = len(array)   
-
-    if (N & (N-1) != 0) and N != 0:
-        print((N & (N-1) == 0), N!= 0)
-        raise Exception('Array does not have a length of power 2')
+    array = np.asarray(array, dtype = np.complex64)
+    N = len(array)
+    half_N = N // 2
+    N_inv = 1/N
     
-    def FFT_recursive(array):
-        N = len(array)
-        if N > 2: 
-            even = array[::2]
-            uneven = array[1::2]
-            
-            even = FFT_recursive(even)
-            uneven = FFT_recursive(uneven)
-            
-            # array = np.concatenate((even, uneven))
-            
-        N_inv = 1/N
-        half_N = int(0.5*N)
+    if N > 2: 
+        even = FFT(array[::2])
+        odd = FFT(array[1::2])
+        array[:half_N] = even
+        array[half_N:] = odd
 
-        comb = np.zeros(N, dtype = np.complex64)
-        for k in range(0, half_N -1):
-            # print(k)
-            t = even[k]
-            factor = np.exp(2j*np.pi*k*N_inv) * uneven[k]
-            comb[k] = t + factor
-            comb[k + half_N] = t - factor
+        # array = np.concatenate((even, odd))
         
-        return comb
+    comb = np.zeros(N, dtype = np.complex64)
+    
+    for k in range(0, half_N):
+        t = array[k]
+        factor = np.exp(2j*np.pi*k*N_inv) * array[k + N //2]
+        comb[k] = t + factor
+        comb[k + half_N] = t - factor
             
-    array = FFT_recursive(array)
-    
-    # half_N = int(0.5 * len(array))
-    # first_half = array[:half_N]
-    # second_half = array[half_N:]
-
-    # FFT_result = np.concatenate((second_half, first_half))
-    
-    return array
+    return comb
 
 def inv_FFT(array): 
-    array = np.complex64(array)
-    N = len(array)   
-
-    if (N & (N-1) != 0) and N != 0:
-        print((N & (N-1) == 0), N!= 0)
-        raise Exception('Array does not have a length of power 2')
+    array = np.asarray(array, dtype = np.complex64)
+    N = len(array)
+    half_N = N // 2
+    N_inv = 1/N
     
-    def FFT_recursive(array):
-        N = len(array)
-        if N > 2: 
-            even = array[::2]
-            uneven = array[1::2]
-            
-            even = FFT_recursive(even)
-            uneven = FFT_recursive(uneven)
-            
-            # array = np.concatenate((even, uneven))
-            
+    if N > 2: 
+        even = inv_FFT(array[::2])
+        odd = inv_FFT(array[1::2])
+        array[:half_N] = even
+        array[half_N:] = odd
 
-        N_inv = 1/N
-        half_N = int(0.5*N)
-
-        comb = np.zeros(N, dtype = np.complex64)
-        for k in range(0, half_N -1):
-            # print(k)
-            t = even[k]
-            factor = np.exp(-2j*np.pi*k*N_inv) * uneven[k] / 2
-            comb[k] = t + factor
-            comb[k + half_N] = t - factor
+        # array = np.concatenate((even, odd))
         
-        return comb
+    comb = np.zeros(N, dtype = np.complex64)
+    
+    for k in range(0, half_N):
+        t = array[k]
+        factor = np.exp(-2j*np.pi*k*N_inv) * array[k + N //2]
+        comb[k] = (t + factor) * 0.5
+        comb[k + half_N] = (t - factor) * 0.5
             
-    array = FFT_recursive(array)
-    
-    # half_N = int(0.5 * len(array))
-    # first_half = array[:half_N]
-    # second_half = array[half_N:]
-
-    # FFT_result = np.concatenate((second_half, first_half))
-    
-    return array
-    
-
-def grid(tree, depth): 
-    
-    pixels = 2**depth
-    grid = np.zeros((pixels, pixels, pixels))
-    center = tree.box_center
-    
-    x_middle = center[0]/pixels
-    def traverse(n): 
-        if n == None: 
-            return
-        if n.depth == depth:
-            x = n.box_center[0]
-            y = n.box_center[1]
-            z = n.box_center[2]
-            ind_z = int((z+x_middle)/(x_middle*2) -1)
-            ind_y = int((y+x_middle)/(x_middle*2) -1)
-            ind_x = int((x+x_middle)/(x_middle*2) -1)
-            grid[ind_x, ind_y, ind_z] = n.mass /(x_middle**3)
-            
-            return
-        
-        if n.depth <= depth:
-            for child in [n.child1, n.child2, n.child3, n.child4, n.child5, n.child6, n.child7, n.child8]: 
-                traverse(child)
-            
-    traverse(tree)
-    return grid
+    return comb
 
 Ngrid = 128
-densgrid=grid(tree, 7)
+densgrid= grid(tree, 7) / ((L/128)**3)
 potential= densgrid.copy()
 potential = np.complex64(potential)
 
@@ -324,16 +279,17 @@ for i in range(densgrid.shape[0]):
         FFT_array = FFT(potential[i,:,j])
         potential[i,:,j] = FFT_array
         
-val = 1.0/(Ngrid * 250/Ngrid)
-N = (Ngrid-1)//2 + 1
+# N = (Ngrid-1)//2 + 1
 k = np.zeros(Ngrid)
-k[:N] = np.arange(0, N)*2*np.pi
-k[N:] = np.arange(-(Ngrid//2), 0)*2*np.pi
+N_half = Ngrid // 2
+k[:N_half] = np.arange(0, N_half)
+k[N_half:] = np.arange(-(N_half), 0)
+k *= 2 * np.pi / L
 
 kx, ky, kz = np.meshgrid(k, k, k)
-k_squared = kx**2 + ky**2 + kz**2
+k_squared = kx**2 + ky**2 + kz**2 
 k_squared[0,0,0] = 100
-potential = potential/k_squared 
+potential = potential/k_squared
 
 for i in range(densgrid.shape[0]): 
     for j in range(densgrid.shape[0]): 
