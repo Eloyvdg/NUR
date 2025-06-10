@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 # Question 1: Simulating the solar system
 
 G = c.G.to(u.AU**3 * u.d**-2 * u.kg**-1)
-
+   
 def acc_tensor(position, masses): 
     x, y, z = position[:,0], position[:,1], position[:,2]
     tensor = np.zeros((x.shape[0],x.shape[0],3))
@@ -25,13 +25,6 @@ def acc_tensor(position, masses):
             
             tensor[i,j,:] = -acc * masses[j]
             tensor[j,i,:] = acc  * masses[i]
-
-        
-    # tensor_sum = np.sum(tensor, axis = 1)
-    # for i, mass in enumerate(masses): 
-    #     tensor_sum[i,:] = tensor_sum[i,:] * mass
-
-    # print(tensor)
     return np.sum(tensor, axis = 1)
 
 def specific_accelaration(r1, r2): 
@@ -40,9 +33,6 @@ def specific_accelaration(r1, r2):
 # pick a time (please use either this or the current time)
 t = Time("2021-12-07 10:00")
 delta_t = 12 * 3600
-
-# initialize the planets; Mars is shown as an example
-
 
 with solar_system_ephemeris.set('jpl'):
     sun = get_body_barycentric_posvel('sun', t)
@@ -57,12 +47,6 @@ with solar_system_ephemeris.set('jpl'):
     
 masses = np.array([0.0553, 0.815, 1, 0.1075, 317.8, 95.2, 14.6, 17.2]) * 5.9722e24
 masses = np.append(np.array([1.989e30]), masses)
-
-# calculate the x position in AU
-# print(marsposition.x.to_value(u.AU))
-
-# calculate the v_x velocity in AU/day
-# print(marsvelocity.x.to_value(u.AU/u.d))
 
 # Problem 1.a
 positions = [sun[0], mercury[0], venus[0], earth[0], mars[0], jupiter[0], saturn[0], uranus[0], neptune[0]]
@@ -92,14 +76,10 @@ ax[1].set_aspect('equal', 'box')
 ax[0].set(xlabel='X [AU]', ylabel='Y [AU]')
 ax[1].set(xlabel='X [AU]', ylabel='Z [AU]')
 plt.legend(loc=(1.05,0))
-# plt.savefig("fig1a.png")
-# plt.close()
-plt.show()
+plt.savefig("fig1a.png", dpi = 300)
+plt.close()
 
 # Problem 1.b
-# For visibility, you may want to do two versions of this plot: 
-# one with all planets, and another zoomed in on the four inner planets
-
 time = np.linspace(0, 200*365, 200*365*2 + 1)
 delta_t = np.diff(time)[0]
 
@@ -126,7 +106,7 @@ for t in range(len(time) - 1):
     acc = acc_tensor(pos_l[:,t+1,:], masses)
     vel_half = vel_half + acc * delta_t
     
-    vel_l[:,t+1,:] = vel_l[:,t,:] + 0.5 * vel_half * delta_t
+    vel_l[:,t+1,:] = vel_half - 0.5 * acc * delta_t
 
     
 x_l, y_l, z_l = pos_l[:,:,0], pos_l[:,:,1], pos_l[:,:,2]
@@ -140,9 +120,8 @@ ax[0].set_aspect('equal', 'box')
 ax[0].set(xlabel='X [AU]', ylabel='Y [AU]')
 ax[1].set(xlabel='Time [yr]', ylabel='Z [AU]')
 plt.legend(loc=(1.05,0))
-# plt.savefig("fig1b.png")
-# plt.close()
-plt.show()
+plt.savefig("fig1b.png", dpi = 300)
+plt.close()
 
 
 # Problem 1.c
@@ -195,9 +174,8 @@ ax[0].set_aspect('equal', 'box')
 ax[0].set(xlabel='X [AU]', ylabel='Y [AU]')
 ax[1].set(xlabel='Time [yr]', ylabel='Z [AU]')
 plt.legend(loc=(1.05,0))
-# plt.savefig("fig1b.png")
-# plt.close()
-plt.show()
+plt.savefig("fig1c.png")
+plt.close()
 
 fig, ax = plt.subplots(1,2, figsize=(12,5), constrained_layout=True)
 for i, obj in enumerate(names):
@@ -217,31 +195,5 @@ ax[0].set(xlabel='Time [yr]', ylabel='Z [AU]', title='Leapfrog')
 ax[1].set(xlabel='Time [yr]', ylabel='Z [AU]', title='RK4')
 ax[2].set(xlabel='Time [yr]', ylabel='X [AU]', title='Absolute difference in x-position')
 plt.legend(loc=(1.05,0))
-plt.show()
-
-# fig, ax = plt.subplots(1,2, figsize=(12,5), constrained_layout=True)
-# for i, obj in enumerate(names):
-#     ax[0].plot(time[i,:]*u.d.to(u.yr), z_l[i,:], label=obj)
-#     ax[1].plot(time[i,:]*u.d.to(u.yr), z_r[i,:], label=obj)
-# ax[0].set(xlabel='Time [yr]', ylabel='Z [AU]', title='Leapfrog')
-# ax[1].set(xlabel='Time [yr]', ylabel='Z [AU]', title='RK4')
-# plt.legend(loc=(1.05,0))
-# plt.show()
-
-# fig, ax = plt.subplots(1,2, figsize=(12,5), constrained_layout=True)
-# for i, obj in enumerate(names):
-#     ax[0].scatter(x[i,:], y_r[i,:], label=obj)
-#     ax[1].scatter(x[i,:], z_r[i,:], label=obj)
-# ax[0].set_aspect('equal', 'box')
-# ax[1].set_aspect('equal', 'box')
-# ax[0].set(xlabel='X [AU]', ylabel='Y [AU]')
-# ax[1].set(xlabel='X [AU]', ylabel='Z [AU]')
-# plt.legend(loc=(1.05,0))
-# # plt.savefig("fig1a.png")
-# # plt.close()
-# plt.show()
-
-
-
-# plt.savefig("fig1c.png")
-# plt.close()
+plt.savefig("fig1c2.png")
+plt.close()
