@@ -25,7 +25,7 @@ rho_mean=Np*mp/L**3 #mean density in Msun/Mpc^3 (comoving, matches 3*H_0^2/(8*pi
         
 class Node(): 
     def __init__(self, depth, child1, child2, child3, child4, child5, child6, child7, child8, 
-                 box_center, length, start_index, mass):
+                 box_center, length, start_index, mass, com):
         self.depth = depth
         self.child1 = child1
         self.child2 = child2
@@ -40,6 +40,7 @@ class Node():
         self.length = length
         self.start_index = start_index
         self.box_center = box_center
+        self.com = com
         
 index_array = np.arange(0,Np)
     
@@ -89,6 +90,8 @@ def build_tree(array, depth, max_depth, box_center, particles, start_index, leng
                 new_midpoints[:,ind] = box_center_new
                 ind += 1
         
+    pos_node = pos[index_array[start_index:start_index + length],:]
+    com = np.sum(pos_node * mp, axis = 0) / (length * mp)
     
     node1 = build_tree(array, depth + 1, max_depth, new_midpoints[:,0], particles, start_indices[0], len_array[0])
     node2 = build_tree(array, depth + 1, max_depth, new_midpoints[:,1], particles, start_indices[1], len_array[1])
@@ -99,7 +102,7 @@ def build_tree(array, depth, max_depth, box_center, particles, start_index, leng
     node7 = build_tree(array, depth + 1, max_depth, new_midpoints[:,6], particles, start_indices[6], len_array[6])
     node8 = build_tree(array, depth + 1, max_depth, new_midpoints[:,7], particles, start_indices[7], len_array[7])
 
-    node = Node(depth, node1, node2, node3, node4, node5, node6, node7, node8, box_center, length, start_index, length*mp)
+    node = Node(depth, node1, node2, node3, node4, node5, node6, node7, node8, box_center, length, start_index, length*mp, com)
     
     return node
 
@@ -192,7 +195,7 @@ k[:N_half] = np.arange(0, N_half)
 k[N_half:] = np.arange(-N_half, 0)
 
 d = Ngrid/L
-k *= 2 * np.pi / L / (d * Ngrid)
+k *= 2 * np.pi / (Ngrid**2)
 
 kx, ky, kz = np.meshgrid(k, k, k)
 k_squared = kx**2 + ky**2 + kz**2 
