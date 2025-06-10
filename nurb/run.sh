@@ -7,6 +7,10 @@ if [ ! -d "plots" ]; then
 fi
 rm -rf plots/*
 
+if [ ! -e galaxy_data.txt ]; then
+  wget https://home.strw.leidenuniv.nl/~daalen/Handin_files/galaxy_data.txt 
+fi
+
 # Script that returns a plot
 echo "Run the first script ..."
 python3 Ex1.py
