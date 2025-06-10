@@ -5,12 +5,12 @@ from Fourier import FFT, inv_FFT
 
 # Question 2: Calculating potentials
 
-# with h5py.File("/disks/cosmodm/DMO_a0.1_256.hdf5","r") as handle:
-#     pos=handle["Position"][...] #particle positions, shape (Np,3), comoving
+with h5py.File("/disks/cosmodm/DMO_a0.1_256.hdf5","r") as handle:
+    pos=handle["Position"][...] #particle positions, shape (Np,3), comoving
     #vel=handle["Velocity"][...] #particle velocities, shape (Np,3), comoving <-- not used, but if you're interested
     
-with h5py.File("DMO_a0.1_256.hdf5","r") as handle:
-    pos=handle["Position"][...] #particle positions, shape (Np,3), comoving
+#with h5py.File("DMO_a0.1_256.hdf5","r") as handle:
+#    pos=handle["Position"][...] #particle positions, shape (Np,3), comoving
 
 Np=np.int64(256)**3 #number of particles
 mp=np.float32(3.64453e10) #particle mass in Msun; all 32-bit to save memory
