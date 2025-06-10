@@ -1,0 +1,64 @@
+\section{Exercise 3}
+\lstinputlisting{Ex3.py}
+\subsection{Exercise 3a}
+The first step of classifying galaxies using machine learning is feature scaling of the data. We want the features to have mean 0 and standard deviation 1, and therefore we will use standardization, given by the following equation: 
+\begin{equation}
+    X_j^{(i)} = \frac{X_j^{(j)} - \mu_j}{\sigma_j}
+\end{equation}
+where $\mu_j$ is the mean and $\sigma_j$ the standard deviation of a feature. The first ten lines of the result after feature scaling are: 
+
+\lstinputlisting[firstline=1, lastline=10]{galaxy_data_fs.txt}
+
+Now we can plot the results in a histogram. This is shown in Figure \ref{fig:3a}.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.9\linewidth]{fig3a.png}
+  \caption{The distribution of the four different features of the data after feature scaling.}
+  \label{fig:3a}
+\end{figure}
+
+\subsection{Exercise 3b}
+Next, we want to write a cost function that minimizes to find the best solution. The cost function we will minimize is: 
+\begin{equation}
+    J(\boldsymbol{\theta}) = -\frac{1}{m}\left\{ y^{(i)} \mathrm{Ln}\left[ h_{\boldsymbol{\theta}}(\mathbf{x}^{(i)}) \right] + (1 - y^{(i)}) \mathrm{Ln}\left[ 1 -h_{\boldsymbol{\theta}}(\mathbf{x}^{(i)}) \right] \right\}
+\end{equation}
+where
+\begin{equation}
+    h_{\boldsymbol{\theta}} = \sigma (\boldsymbol{\theta}^T \mathbf{x}^{(i)})
+\end{equation}
+In this equation, $\sigma$ is the logistic sigmoid function. This function is then minimized by changing the weights $\boldsymbol{\theta}$ using a downhill simplex method. The code for the downhill simplex is shown in the Appendix. We will minimize this cost function for all combinations of 2 features, resulting in a total of 6 different weight sets. How the cost function converges for every set of features is shown in Figure \ref{fig:3b}.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.9\linewidth]{fig3b.png}
+  \caption{Minimization of the cost function for 6 different combinations of features.}
+  \label{fig:3b}
+\end{figure}
+In this figure, it is clearly visible that minimizing the cost function when $k_{CO}$ is taken into account, gives the best results. Especially in the combination with color, the cost function minimizes very well. 
+
+\subsection{Exercise 3c}
+To check how well our classification works, we will calculate compute the number of True/False Positive/Negatives and calculate the precision, recall and $f_1$ score. In our case, true positives are spirals, and true negatives are ellipticals. The formulas for this are the following: 
+\begin{equation}
+    P = \frac{TP}{TP + FP}
+\end{equation}
+\begin{equation}
+    R = \frac{TP}{TP + FN}
+\end{equation}
+\begin{equation}
+    f_{\beta} = (1+\beta^2)\frac{P \cdot R}{\beta^2P + R}
+\end{equation}
+The results are the following: 
+\lstinputlisting{results_3c.txt}
+To plot the decision boundary, we first have to define this boundary. Because we are using a logistic sigmoid function, we can place the decision boundary at $\sigma (\boldsymbol{\theta}^T \mathbf{x}^{(i)}) = 0.5$. The equation to plot this is the following: 
+\begin{equation}
+    y = -\frac{\boldsymbol{\theta_1}x}{\boldsymbol{\theta_2}}
+\end{equation}
+where $\boldsymbol{\theta_1}$ are the weights for the first feature, and $\boldsymbol{\theta_2}$ the weights for the second feature. Furthermore, x is the range over which the first feature spans, and y the values for the y-axis of the figures. The resulting decision boundaries are shown in Figure \ref{fig:3c}
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.9\linewidth]{fig3c.png}
+  \caption{Minimization of the cost function for 6 different combinations of features.}
+  \label{fig:3c}
+\end{figure}
+The number of true positives/negatives and the decision boundaries clearly show that $k_{CO}$ is the most important feature when classifying the galaxies in this data set. This is also what we saw when minimizing the cost function, where this feature minimized the cost function the best. While for the other features there is no clear difference between the two types of galaxies, the color and $k_{CO}$ show a really nice boundary. Therefore it can classify the galaxies better, which leads to less false positives/negatives. The combination between the extension and emission line flux performs the worst. This is also very good visible in the figure with the boundary plots. The difference between is spirals and ellipticals is almost not distinguishable here. 

@@ -1,0 +1,30 @@
+\section{Exercise 1b}
+\lstinputlisting{Ex2.py}
+\subsection{Exercise 2a}
+In order to build an octree, we will make a class that stores each node, and at the lowest level the leaves. In this node, we have to store 8 child nodes (except for the leaves), the depth, box center, total mass, and the center of mass. To build the tree, we will use a recursive algorithm where we first check if the current depth of node is larger than the maximum depth given as input. Next, we calculate which particles are in which new octant. We do this by taking \texttt{positions_particles >= box_center}. Based on the combinations of True/False for the x-y-x-coordinates, we give the particle an index with the following line: \texttt{index_octant = (mask[:,0] << 2) | (mask[:,1]) << 1| (mask[:,2] << 0)}, where the mask is based on the position with relevance to the center. After this, we will change the index array with all the particles indices. For example, particle indices that are in the octant with index 0 are stored in the first part of the index array, and particles in octant with index 1 are stored in the second part of the index array. In order to make this work, we will also save start index for each new octant with the length (number of particles in the specific octant. Now we calculate the new box centers and store them too in the node class. 
+
+To create the mass maps at different slices $x_i$, we will traverse the tree and create a 3D mass map. It will go down the tree until the required depth is reached. At this depth, it calculates the index based on its box center. When we have the whole map, we can easily select different slices of the tree. The results are shown in Figure \ref{fig:2a1}, \ref{fig:2a2}, and \ref{fig:2a3}.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.9\linewidth]{fig2a.png}
+  \caption{The mass maps for the four first slices in x at a depth of 3.}
+  \label{fig:2a_level3}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.9\linewidth]{fig2a.png}
+  \caption{The mass maps for the four first slices in x at a depth of 5.}
+  \label{fig:2a_level5}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.9\linewidth]{fig2a.png}
+  \caption{The mass maps for the four first slices in x at a depth of 7.}
+  \label{fig:2a_level7}
+\end{figure}
+
+\subsection{Exercise 2b}
+\lstinputlisting{Fourier.py}

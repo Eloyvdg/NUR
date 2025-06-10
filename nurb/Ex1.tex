@@ -1,0 +1,80 @@
+\section{Exercise 1}
+\subsection{Exercise 1a}
+\lstinputlisting{Ex1.py}
+First of all, we will plot the initial positions of the the planets and the Sun at 2021-12-07 10:00. This is shown in Figure \ref{fig:1a}. 
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.9\linewidth]{fig1a.png}
+  \caption{The initial positions of the planets and the Sun. Both their x-y and x-z positions are shown. }
+  \label{fig:1a}
+\end{figure}
+
+\subsection{Exercise 1b}
+Now we will try to evolve the positions of the planets and the Sun following the leapfrog algorithm. The first step of this is to find a tensor with the accelerations originating from the forces felt due to all the other objects. To do so, we follow the principle as described in the hand-in. Once we have the tensor ready, we can sum over the second axis to find the total acceleration for an object at a specific point in time. 
+
+The first step is to calculate the velocity at a half time step. The time step we take is half a day. We do this with the following equation: 
+\begin{equation}
+    \mathbf{v}_{i+1/2} = \mathbf{v}_i + \frac{1}{2}\mathbf{a}_i \cdot \Delta t
+\end{equation}
+After this, we can calculate the new positions at the new timestep: 
+\begin{equation}
+    \mathbf{x}_{i+1} = \mathbf{x}_i + \mathbf{v}_{i+1/2} \cdot \Delta t
+\end{equation}
+With the new positions known, we can calculate the acceleration tensor again, update the velocity at a half timestep and save the velocity at a full timestep: 
+\begin{equation}
+    \mathbf{v}_{i+3/2} = \mathbf{v}_{i+1/2} + \mathbf{a}_{i+1} \cdot \Delta t
+\end{equation}
+\begin{equation}
+    \mathbf{v}_{i+1} = \mathbf{v}_i + \mathbf{a}_{i+1} \cdot \Delta t
+\end{equation}
+
+The results of this algorithm are shown in Figure \ref{fig:1b}. 
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.9\linewidth]{fig1b.png}
+  \caption{The x-y positions of the planets and the Sun, and the z-positions over a period of 200 years, calculated with leapfrog.}
+  \label{fig:1b}
+\end{figure}
+
+The leapfrog algorithm is time-reversable, and therefore it conserves energy to machine precision. This makes the algorithm very suitable for this kind of calculations. In the figures we also see that the orbits do not move inwards or outwards over time. The same holds for the z-positions of the planets and the Sun, which seem to show constant periods.
+
+\subsection{Exercise 1b}
+Lastly we will implement an RK4 to evolve the particles. We will use the same acceleration tensor for this method. However, we evolve particles with the following equations: 
+
+\begin{align}
+    \mathbf{v}_{k1} &= \mathbf{a}_i \cdot \Delta t \\
+    \mathbf{x}_{k1} &= \mathbf{v}_i \cdot \Delta t
+\end{align}
+
+\begin{align}
+    \mathbf{v}_{k2} &= \mathbf{a}_{\frac{1}{2}k1} \cdot \Delta t \\
+    \mathbf{x}_{k2} &= (\mathbf{v}_i  + \frac{1}{2}\mathbf{v}_{k1}) \cdot \Delta t
+\end{align}
+
+\begin{align}
+    \mathbf{v}_{k3} &= \mathbf{a}_{\frac{1}{2}k2} \cdot \Delta t \\
+    \mathbf{x}_{k3} &= (\mathbf{v}_i  + \frac{1}{2}\mathbf{v}_{k2}) \cdot \Delta t
+\end{align}
+
+\begin{align}
+    \mathbf{v}_{k4} &= \mathbf{a}_{k3} \cdot \Delta t \\
+    \mathbf{x}_{k4} &= (\mathbf{v}_i  + \mathbf{v}_{k3}) \cdot \Delta t
+\end{align}
+
+In these equations, $\mathbf{a}_{\frac{1}{2}k1}$ is the acceleration at position $ \mathbf{x}_i + \frac{1}{2}\mathbf{x}_{k1}$. At the end, all the new positions and velocities are given by: 
+
+\begin{align}
+    \mathbf{v}_{i+1} &= \mathbf{v}_{i} + \frac{1}{6} (\mathbf{v}_{k1} + \mathbf{v}_{k4} + 2(\mathbf{v}_{k2} + \mathbf{v}_{k3})) \\
+    \mathbf{x}_{i+1} &= \mathbf{x}_{i} + \frac{1}{6} (\mathbf{x}_{k1} + \mathbf{x}_{k4} + 2(\mathbf{x}_{k2} + \mathbf{x}_{k3})) \\
+\end{align}
+
+The results are shown in Figure \ref{fig:1c}.
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.9\linewidth]{fig1b.png}
+  \caption{The x-y positions of the planets and the Sun, and the z-positions over a period of 200 years, calculated with RK4.}
+  \label{fig:1c}
+\end{figure}
+
+Because RK4 is a forward method, it adds energy with every step, and therefore diverges with, This should result in outward moving orbits that are less accurate than the leapfrog algorithm. However, it isn't visible by eye that the orbits diverge. When we plot the z-positions over time next to each other and the absolute difference in x-position, it becomes clear that especially for the smaller orbits the x-positions diverge. This would indicate that indeed the orbits of RK4 move out. The absolute difference in x-position is plotted, because the orbits don't seem to change a lot by eye in the timespan of 200 years. The absolute difference therefore indicates best how the orbits differ from each other. 
