@@ -80,8 +80,8 @@ The results are shown in Figure \ref{fig:1c}.
 Because RK4 is a forward method, it adds energy with every step, and therefore diverges with, This should result in outward moving orbits that are less accurate than the leapfrog algorithm. However, it isn't visible by eye that the orbits diverge, as visible in  Figure \ref{fig1c1}. When we plot the z-positions over time next to each other and the absolute difference in x-position (Figure \ref{fig:1c2}, it becomes clear that especially for the smaller orbits the x-positions diverge. This would indicate that indeed the orbits of RK4 move out. The absolute difference in x-position is plotted, because the orbits don't seem to change a lot by eye in the timespan of 200 years. The absolute difference therefore indicates best how the orbits differ from each other. 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=0.9\linewidth]{fig1c2.png}
-  \caption{The x-y positions for both leapfrog and RK4 zoomed in on the 4 four smallest orbits.}
+  \includegraphics[width=0.9\linewidth]{fig1c1.png}
+  \caption{The x-y positions for both leapfrog and RK4.}
   \label{fig:1c1}
 \end{figure}
 
