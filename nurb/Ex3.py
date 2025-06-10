@@ -5,7 +5,7 @@ from downhill import downhill_simplex
 
 # Question 3: Spiral and elliptical galaxies
 # Problem 3.a
-data=np.genfromtxt("galaxy_data.txt")
+data=np.genfromtxt(os.path.join(sys.path[0],"galaxy_data.txt"))
 
 
 features = data[:,:4]
