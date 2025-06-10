@@ -26,7 +26,7 @@ With the new positions known, we can calculate the acceleration tensor again, up
     \mathbf{v}_{i+3/2} = \mathbf{v}_{i+1/2} + \mathbf{a}_{i+1} \cdot \Delta t
 \end{equation}
 \begin{equation}
-    \mathbf{v}_{i+1} = \mathbf{v}_i + \mathbf{a}_{i+1} \cdot \Delta t
+    \mathbf{v}_{i+1} = \mathbf{v}_{i+1/2} + \frac{1}{2}\mathbf{a}_{i+1} \cdot \Delta t
 \end{equation}
 
 The results of this algorithm are shown in Figure \ref{fig:1b}. 
@@ -77,11 +77,17 @@ The results are shown in Figure \ref{fig:1c}.
   \label{fig:1c}
 \end{figure}
 
-Because RK4 is a forward method, it adds energy with every step, and therefore diverges with, This should result in outward moving orbits that are less accurate than the leapfrog algorithm. However, it isn't visible by eye that the orbits diverge. When we plot the z-positions over time next to each other and the absolute difference in x-position (Figure \ref{fig:1c2}, it becomes clear that especially for the smaller orbits the x-positions diverge. This would indicate that indeed the orbits of RK4 move out. The absolute difference in x-position is plotted, because the orbits don't seem to change a lot by eye in the timespan of 200 years. The absolute difference therefore indicates best how the orbits differ from each other. 
+Because RK4 is a forward method, it adds energy with every step, and therefore diverges with, This should result in outward moving orbits that are less accurate than the leapfrog algorithm. However, it isn't visible by eye that the orbits diverge, as visible in  Figure \ref{fig1c1}. When we plot the z-positions over time next to each other and the absolute difference in x-position (Figure \ref{fig:1c2}, it becomes clear that especially for the smaller orbits the x-positions diverge. This would indicate that indeed the orbits of RK4 move out. The absolute difference in x-position is plotted, because the orbits don't seem to change a lot by eye in the timespan of 200 years. The absolute difference therefore indicates best how the orbits differ from each other. 
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.9\linewidth]{fig1c2.png}
+  \caption{The x-y positions for both leapfrog and RK4 zoomed in on the 4 four smallest orbits.}
+  \label{fig:1c1}
+\end{figure}
 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.9\linewidth]{fig1c2.png}
   \caption{The x-y positions for both leapfrog and RK4. The right plot shows the absolute difference between the x-positions of RK4 and leapfrog.}
-  \label{fig:1c}
+  \label{fig:1c2}
 \end{figure}
