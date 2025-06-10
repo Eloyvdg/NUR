@@ -28,6 +28,7 @@ To create the mass maps at different slices $x_i$, we will traverse the tree and
 
 \subsection{Exercise 2b}
 \lstinputlisting{Fourier.py}
+For exercise 2b, we will perform a Fourier transform to find the potential. We first create a density map. To do this, we will use the mass map at depth 7 found in the previous exercise. To find the density, we simply divide by $(L/2^7)^3$, as this is the size of the leaves at depth 7. Next, we will perform a recursive FFT along all three axes of the cube. In order to get the 3D FFT, we can apply the FFT along the first axis, after which we do the second and third axis. Now we define $k^2$, because we have to divide by this before we do the inverse Fourier transform. To find k in one dimension, we take an array ranging from $-N_{grid}\ //\ 2 $ to $N_{grid}\ // \ 2$, where Ngrid is 128 in this case. Now we multiply this array with $2\pi$ and divide by $L \cdot d \cdot N_{grid}$, where $d = \frac{N_{grid}}{L}$. Therefore, this is equal to multiplying with $2\pi$ and dividing by $N_{grid}^2$. Now we can calculate $k^2$ by making a meshgrid of k and calculating $k^2 = k_x^2 + k_y^2 + k_z^2$. The next step is to divide the Fourier transformed density map by $k^2$ and taking the inverse FFT. We multiply this by $-G/2\pi$ to finally find the potential. The potential at different slices $x_i$ is shown in Figure \ref{fig:2b.png} 
 
 \begin{figure}[h!]
   \centering
