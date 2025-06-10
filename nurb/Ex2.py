@@ -9,7 +9,7 @@ from Fourier import FFT, inv_FFT
 #    pos=handle["Position"][...] #particle positions, shape (Np,3), comoving
     #vel=handle["Velocity"][...] #particle velocities, shape (Np,3), comoving <-- not used, but if you're interested
     
-with h5py.File("DMO_a0.1_256.hdf5","r") as handle:
+with h5py.File("/net/vdesk/data2/daalen/DMO_a0.1_256.hdf5","r") as handle:
     pos=handle["Position"][...] #particle positions, shape (Np,3), comoving
 
 Np=np.int64(256)**3 #number of particles
