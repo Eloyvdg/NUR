@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import itertools
+import os
+import sys
 from downhill import downhill_simplex
 
 # Question 3: Spiral and elliptical galaxies
