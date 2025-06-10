@@ -98,15 +98,17 @@ for i, obj in enumerate(velocities):
     vel_l[i, 0, 1] = obj.y.to_value(u.AU/u.d)
     vel_l[i, 0, 2] = obj.z.to_value(u.AU/u.d)
     
+    
 vel_half = vel_l[:,0,:] + 0.5 * acc_tensor(pos_l[:,0,:], masses) * delta_t
 
 for t in range(len(time) - 1): 
     pos_l[:,t+1,:] = pos_l[:,t,:] + vel_half * delta_t
     
     acc = acc_tensor(pos_l[:,t+1,:], masses)
-    vel_half = vel_half + acc * delta_t
     
-    vel_l[:,t+1,:] = vel_half - 0.5 * acc * delta_t
+    vel_l[:,t+1,:] = vel_half + 0.5 * acc * delta_t
+    vel_half = vel_half + acc * delta_t
+
 
     
 x_l, y_l, z_l = pos_l[:,:,0], pos_l[:,:,1], pos_l[:,:,2]
@@ -184,7 +186,8 @@ for i, obj in enumerate(names):
 ax[0].set(xlabel='X [AU]', ylabel='Y [AU]', title='Leapfrog')
 ax[1].set(xlabel='X [AU]', ylabel='Y [AU]', title='RK4')
 plt.legend(loc=(1.05,0))
-plt.show()
+plt.savefig("fig1c1.png")
+plt.close()
 
 fig, ax = plt.subplots(1,3, figsize=(18,5), constrained_layout=True)
 for i, obj in enumerate(names):
