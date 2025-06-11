@@ -15,8 +15,7 @@ G = c.G.to(u.AU**3 * u.d**-2 * u.kg**-1)
   
 def specific_acceleration(r1, r2): 
     # Calculates the specific acceleration 
-    # return -G.value / ( (np.sqrt(np.sum((r2 - r1)**2)) ) **3) * (r2 - r1)
-    return -G.value / (np.linalg.norm(r2 - r1)) * (r2 - r1)
+    return -G.value / ( (np.sqrt(np.sum((r2 - r1)**2)) ) **3) * (r2 - r1)
  
 def acc_tensor(position, masses): 
     # Calculates the acceleration tensor
