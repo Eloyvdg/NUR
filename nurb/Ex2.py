@@ -5,11 +5,11 @@ from Fourier import FFT, inv_FFT
 
 # Question 2: Calculating potentials
 
-#with h5py.File("/disks/cosmodm/DMO_a0.1_256.hdf5","r") as handle:
-#    pos=handle["Position"][...] #particle positions, shape (Np,3), comoving
+# with h5py.File("/disks/cosmodm/DMO_a0.1_256.hdf5","r") as handle:
+#     pos=handle["Position"][...] #particle positions, shape (Np,3), comoving
     #vel=handle["Velocity"][...] #particle velocities, shape (Np,3), comoving <-- not used, but if you're interested
     
-with h5py.File("/net/vdesk/data2/daalen/DMO_a0.1_256.hdf5","r") as handle:
+with h5py.File("DMO_a0.1_256.hdf5","r") as handle:
     pos=handle["Position"][...] #particle positions, shape (Np,3), comoving
 
 Np=np.int64(256)**3 #number of particles
@@ -24,9 +24,12 @@ rho_mean=Np*mp/L**3 #mean density in Msun/Mpc^3 (comoving, matches 3*H_0^2/(8*pi
 # Question 2a: using Barnes-Hut [note: not actually calculating a potential, unless you do the bonus question]
         
 class Node(): 
+    '''Class that stores all required information of a node in an octree'''
     def __init__(self, depth, child1, child2, child3, child4, child5, child6, child7, child8, 
                  box_center, length, start_index, mass, com):
-        self.depth = depth
+        self.depth = depth # Depth of the node
+        
+        # The 8 child nodes of the node
         self.child1 = child1
         self.child2 = child2
         self.child3 = child3
@@ -36,45 +39,51 @@ class Node():
         self.child7 = child7
         self.child8 = child8
         
-        self.mass = mass
-        self.length = length
-        self.start_index = start_index
-        self.box_center = box_center
-        self.com = com
+        self.mass = mass # Total mass in the node
+        self.length = length # Length of the index array
+        self.start_index = start_index # Start index of the index array
+        self.box_center = box_center # Geometrical center of the node 
+        self.com = com # Center of mass of the node
         
-index_array = np.arange(0,Np)
+index_array = np.arange(0,Np) # Global index array with the indices of all the particles
     
 def build_tree(array, depth, max_depth, box_center, particles, start_index, length): 
+    # Check if the maximum dpeth is reached or if the node is empty (no particles)
     if depth > max_depth or len(array) == 0: 
         return None
+    
     
     start_index = int(start_index)
     length = int(length)
     
-    start_indices = np.zeros(8)
-    start_indices[0] = start_index
-    len_array = np.zeros(8)
+    start_indices = np.zeros(8) # array for new start indices for 8 child nodes
+    start_indices[0] = start_index # For the first child node, it is the same as the previous node
+    len_array = np.zeros(8) # Array for new array lengths (number of particles) for 8 child nodes
     octant_indices = [None]*8
     
+    # Only select the particles in the specific node
     indices_check = index_array[start_index:start_index+length]
     particles_check = particles[indices_check,:]
 
-    
+    # Check in which child node the particles are located
     mask = particles_check >= box_center
+    # Use the bits to give an index to each particle, correpsonding to a child node
     mask = np.where(mask, 1, 0)
-    
     index_octant = (mask[:,0] << 2) | (mask[:,1]) << 1| (mask[:,2] << 0)
 
     for j in range(8): 
+        # Append the indices of the particles to the correct child node
         mask2 = index_octant == j
         new_ind = indices_check[mask2]
         len_array[j] = len(new_ind)
         octant_indices[j] = new_ind
         
     for k in range(1,8): 
+        # Define the new start indices for each child node
         start_indices[k] = start_indices[k-1] + len_array[k-1]
         
     for l in range(8): 
+        # Sort the global index array again
         index_array[int(start_indices[l]):int(start_indices[l]+len_array[l])] = octant_indices[l]
 
     
@@ -83,6 +92,7 @@ def build_tree(array, depth, max_depth, box_center, particles, start_index, leng
     new_midpoints = np.zeros((3,8))
     ind = 0
 
+    # Calculate the new geometrical midpoints for each child node
     for i in range(2):
         for j in range(2): 
             for k in range(2):
@@ -90,9 +100,11 @@ def build_tree(array, depth, max_depth, box_center, particles, start_index, leng
                 new_midpoints[:,ind] = box_center_new
                 ind += 1
         
+    # Calculate the center of mass of the node
     pos_node = pos[index_array[start_index:start_index + length],:]
     com = np.sum(pos_node * mp, axis = 0) / (length * mp)
     
+    # Define the new child nodes
     node1 = build_tree(array, depth + 1, max_depth, new_midpoints[:,0], particles, start_indices[0], len_array[0])
     node2 = build_tree(array, depth + 1, max_depth, new_midpoints[:,1], particles, start_indices[1], len_array[1])
     node3 = build_tree(array, depth + 1, max_depth, new_midpoints[:,2], particles, start_indices[2], len_array[2])
@@ -107,7 +119,7 @@ def build_tree(array, depth, max_depth, box_center, particles, start_index, leng
     return node
 
 def grid(tree, depth): 
-    
+    # Function to create a mass grid for the tree for a specific depth
     pixels = 2**depth
     grid = np.zeros((pixels, pixels, pixels))
     center = tree.box_center
@@ -116,21 +128,23 @@ def grid(tree, depth):
     def traverse(n): 
         if n == None: 
             return
+        
         if n.depth == depth:
+            # IF depth is reached, append the mass to the grid at the rught location
             x = n.box_center[0]
             y = n.box_center[1]
             z = n.box_center[2]
             ind_z = int((z+x_middle)/(x_middle*2) -1)
             ind_y = int((y+x_middle)/(x_middle*2) -1)
             ind_x = int((x+x_middle)/(x_middle*2) -1)
-            grid[ind_x, ind_y, ind_z] = n.mass# /((L/128)**3)
+            grid[ind_x, ind_y, ind_z] = n.mass
             
             return
         
         if n.depth <= depth:
+            # Go one level lower if depth is not reached yet
             for child in [n.child1, n.child2, n.child3, n.child4, n.child5, n.child6, n.child7, n.child8]: 
                 traverse(child)
-            
     traverse(tree)
     return grid
                 
@@ -142,11 +156,14 @@ tree =  build_tree(np.zeros(8), 0, 7, center_start, pos, 0, Np)
 for level in [3,5,7]: #feel free to change any of this code
     pixels=2**level
     size = L/pixels
+    # Calculate the mass map for the depth
     mass_grid = grid(tree, level)
     massmap=np.zeros((4,pixels,pixels),dtype=np.float32)
+    # Append the first four slices in the x-direction to the massmap
     for i in range(4): 
         massmap[i,:,:] = mass_grid[i,:,:]
 
+    # Plot the results
     fig, ax = plt.subplots(2,2, figsize=(10,8))
     pcm = ax[0,0].pcolormesh(np.linspace(0,L, pixels),np.linspace(0,L, pixels), massmap[0,:,:])
     ax[0,0].set(ylabel='z (Mpc)', title=f'x [0-{size}]')
@@ -170,10 +187,11 @@ for level in [3,5,7]: #feel free to change any of this code
 # Question 2b: using the FFT
 
 Ngrid = 128
-densgrid= grid(tree, 7) / ((L/128)**3)
+densgrid= grid(tree, 7) / ((L/128)**3) # Change the massmap to a density map by dividing by the leaf size
 potential= densgrid.copy()
 potential = np.complex64(potential)
 
+# Perform a FFT in all three directions, after each other
 for i in range(densgrid.shape[0]): 
     for j in range(densgrid.shape[0]): 
         FFT_array = FFT(potential[i,j,:])
@@ -188,7 +206,8 @@ for i in range(densgrid.shape[0]):
     for j in range(densgrid.shape[0]): 
         FFT_array = FFT(potential[i,:,j])
         potential[i,:,j] = FFT_array
-        
+     
+# Calculate kx, ky, kz
 k = np.zeros(Ngrid)
 N_half = Ngrid // 2
 k[:N_half] = np.arange(0, N_half)
@@ -198,11 +217,14 @@ d = Ngrid/L
 k *= 2 * np.pi / (Ngrid**2)
 
 kx, ky, kz = np.meshgrid(k, k, k)
+
+# Calculate k^2
 k_squared = kx**2 + ky**2 + kz**2 
 
-k_squared[0,0,0] = 100
-potential = potential/k_squared
+k_squared[0,0,0] = 100 # To avoid division by 0
+potential = potential/k_squared # Divide the FFT of the potential by k^2
 
+# Perform an inverse FFT on the result, again along all directions
 for i in range(densgrid.shape[0]): 
     for j in range(densgrid.shape[0]): 
         FFT_array = inv_FFT(potential[i,j,:])
@@ -218,8 +240,9 @@ for i in range(densgrid.shape[0]):
         FFT_array = inv_FFT(potential[i,:,j])
         potential[i,:,j] = FFT_array
    
-potential = -G/np.pi * potential.real
+potential = -G/np.pi * potential.real # Calculate the potential
 
+# Plot the result at different slices in the x-direction
 fig, ax = plt.subplots(2,2, figsize=(10,8))
 pcm = ax[0,0].pcolormesh(np.linspace(0,L, Ngrid), np.linspace(0,L, Ngrid),potential[0,:,:])
 ax[0,0].set(ylabel='z (Mpc)', title=r'$\mathrm{x_0}$')
