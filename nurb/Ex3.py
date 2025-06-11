@@ -6,17 +6,22 @@ import sys
 from downhill import downhill_simplex
 
 # Question 3: Spiral and elliptical galaxies
+
 # Problem 3.a
+data = np.genfromtxt('galaxy_data.txt')
 data=np.genfromtxt(os.path.join(sys.path[0],"galaxy_data.txt"))
 
 
 features = data[:,:4]
 
+# Feature scaling: standardization
 for i in range(features.shape[1]): 
     features[:,i] = (features[:,i] - np.mean(features[:,i])) / np.std(features[:,i])
     
+
 np.savetxt('galaxy_data_fs.txt', features)
 
+# Plot a histogram of the results
 bin_class = data[:,4]
 fig, ax = plt.subplots(2,2, figsize=(10,8))
 ax[0,0].hist(features[:,0], bins=20)
@@ -33,27 +38,34 @@ plt.close()
 # # Problem 3.b
 
 def sigmoid(z):
+    # logistic sigmoid function
     return 1 / (1 + np.exp(-z))
 
 def cost_function(weights_input, features_input, labels_input):
+    # Cost function minimize
     z = np.sum(weights_input * features_input, axis = 1)
     h_theta = sigmoid(z)
     cost = -1/len(h_theta) * np.sum(labels_input * np.log(h_theta) + (1 - labels_input)* np.log(1 - h_theta))
     return cost
 
-def cost_function2(weights_input, features_input): 
+def hypothesis(weights_input, features_input): 
+    # Returns the hypothesis mapped from 0 to 1 using a logistic sigmoid 
     z = np.sum(weights_input * features_input, axis = 1)
     return sigmoid(z)
 
 def precision(TP, FP): 
+    # Calculates the precision
     return TP / (TP + FP)
     
 def recall(TP, FN): 
+    # Calculates the recall
     return TP / (TP + FN)
 
 def f_score(P, R, beta):
+    # Calculates the F-score
     return (1+beta**2) * (P * R) / (beta**2 * P + R)
     
+# Initial simplex with three sets of weights 
 initial_simplex = np.array([[-1.0, 0.6],
                             [-0.7, 1.1],
                             [-0.8, 1.5]])
@@ -64,18 +76,25 @@ confusion_matrix = np.zeros((4, 4, 4))
 names = [r'$\kappa_{CO}$', 'Color', 'Extended', 'Emission line flux']
 
 fig, ax  = plt.subplots(1,1, figsize=(10,5), constrained_layout=True)
+# Minimize for every combination of 2 features 
 for i in range(4):
     for j in range(i+1, 4): 
         feature_columns = [i,j]
         features_min = features[:,feature_columns]
+        
+        # Minimize the cost function using a downhill simplex 
         cost_minimize = lambda weights_input: cost_function(weights_input, features_min, bin_class)
         minimum, value, best = downhill_simplex(initial_simplex, cost_minimize, 100, 1e-10)
+        
+        # The weights with the lowest cost
         best_weights[i, j, :] = minimum
         
-        results = cost_function2(minimum, features_min)
+        # Define if the output is label 1 or 0, based on the center (0.5)
+        results = hypothesis(minimum, features_min)
         results[results < 0.5] = 0
         results[results >= 0.5] = 1
         
+        # Compute the number of TP, FP, TN and FN
         TP, TN, FP, FN = 0, 0, 0, 0
         for k in range(len(results)): 
             if results[k] == 1:
@@ -88,10 +107,12 @@ for i in range(4):
                     TN += 1
                 else: 
                     FN += 1
-                    
+               
+        # Write the results in a confusion matrix
         arr_confusion = np.array([TP, TN, FP, FN])         
         confusion_matrix[i,j,:] = arr_confusion
         
+        # Plot the minimization of the cost function
         ax.plot(np.arange(0,len(best)), best, label=f'{names[i]}+{names[j]}')
 ax.set(xlabel='Number of iterations', ylabel='Cost function')
 plt.legend(loc=(1.05,0))
@@ -99,11 +120,13 @@ plt.savefig("fig3b.png")
 plt.close()
 
 # Problem 3.c
+# Plot the resulting decision boundaries dor each set of features
 fig, ax = plt.subplots(3,2,figsize=(10,15))
 plot_idx = [[0,0], [0,1], [1,0], [1,1], [2,0], [2,1]]
 for i, comb in enumerate(itertools.combinations(np.arange(0,4), 2)):
     
     ax[plot_idx[i][0],plot_idx[i][1]].scatter(features[:,comb[0]], features[:,comb[1]], c=bin_class)
+    # Define the decision bounadaries
     x1_boundary = np.linspace(np.min(features[:,comb[0]]), np.max(features[:,comb[0]]), 100)
     x2_boundary = -(best_weights[comb][0] * x1_boundary) / best_weights[comb][1]
     ax[plot_idx[i][0],plot_idx[i][1]].plot(x1_boundary, x2_boundary, c='black')
@@ -115,6 +138,7 @@ for i, comb in enumerate(itertools.combinations(np.arange(0,4), 2)):
 plt.savefig("fig3c.png")
 plt.close()
 
+# Calculate the scores and print the results 
 for i in range(4):
     for j in range(i+1, 4): 
         confusion = confusion_matrix[i,j,:]
