@@ -28,7 +28,7 @@ def acc_tensor(position, masses):
     return np.sum(tensor, axis = 1)
 
 def specific_accelaration(r1, r2): 
-    return return -G.value / ( (np.sqrt(np.sum((r2 - r1)**2)) ) **3) * (r2 - r1)
+    return -G.value / ( (np.sqrt(np.sum((r2 - r1)**2)) ) **3) * (r2 - r1)
 
 # pick a time (please use either this or the current time)
 t = Time("2021-12-07 10:00")
